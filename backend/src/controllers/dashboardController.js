@@ -60,14 +60,14 @@ const getKPIs = async (req, res) => {
     const ventasPorCategoria = await db.query(`
       SELECT 
         c.nombre as categoria,
-        SUM(oi.cantidad) as cantidad,
-        SUM(oi.subtotal) as ingresos
+        SUM(oi.cantidad)::integer as cantidad,
+        SUM(oi.subtotal)::numeric as ingresos
       FROM order_items oi
       JOIN orders o ON o.id = oi.order_id
       JOIN menu_items mi ON mi.id = oi.menu_item_id
       JOIN categories c ON c.id = mi.categoria_id
       WHERE o.estado = 'cobrada'
-        AND o.created_at >= $1 AND o.created_at <= $2
+        AND DATE(o.created_at) >= DATE($1) AND DATE(o.created_at) <= DATE($2)
       GROUP BY c.id, c.nombre
       ORDER BY ingresos DESC
     `, [startDate, endDate]);
@@ -111,8 +111,16 @@ const getKPIs = async (req, res) => {
         acc[row.estado] = parseInt(row.cantidad);
         return acc;
       }, {}),
-      itemsMasVendidos: itemsMasVendidos.rows,
-      ventasPorCategoria: ventasPorCategoria.rows,
+      itemsMasVendidos: itemsMasVendidos.rows.map(item => ({
+        ...item,
+        cantidad_vendida: parseInt(item.cantidad_vendida),
+        ingresos: parseFloat(item.ingresos),
+      })),
+      ventasPorCategoria: ventasPorCategoria.rows.map(cat => ({
+        categoria: cat.categoria,
+        cantidad: parseInt(cat.cantidad),
+        ingresos: parseFloat(cat.ingresos),
+      })),
       alertas: {
         stockBajo: parseInt(alertasStock.rows[0].total_alertas),
         agotados: parseInt(agotados.rows[0].agotados),

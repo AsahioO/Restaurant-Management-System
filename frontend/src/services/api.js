@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-// En producción usa VITE_API_URL, en desarrollo usa el proxy /api
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+// URL de la API - producción o desarrollo
+const API_URL = import.meta.env.PROD 
+  ? 'https://emilia-cafe-backend-production.up.railway.app/api'
+  : '/api'
 
 const api = axios.create({
   baseURL: API_URL,

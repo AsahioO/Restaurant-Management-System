@@ -5,8 +5,10 @@ import toast from 'react-hot-toast'
 
 const SocketContext = createContext(null)
 
-// URL del servidor Socket.IO
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin
+// URL del servidor Socket.IO - producción o desarrollo
+const SOCKET_URL = import.meta.env.PROD 
+  ? 'https://emilia-cafe-backend-production.up.railway.app'
+  : window.location.origin
 
 export function SocketProvider({ children }) {
   const { user, isAuthenticated } = useAuth()

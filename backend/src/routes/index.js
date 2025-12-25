@@ -21,7 +21,31 @@ router.get('/health', (req, res) => {
 // Endpoint temporal para limpiar duplicados - ELIMINAR DESPUÉS DE USAR
 router.get('/clean-duplicates', async (req, res) => {
   try {
-    // Eliminar items del menú duplicados primero (tienen FK a categorías)
+    // Primero actualizar order_items para que apunten a los IDs originales (no duplicados)
+    await db.query(`
+      UPDATE order_items oi
+      SET menu_item_id = (
+        SELECT MIN(m2.id) FROM menu_items m2 
+        WHERE m2.nombre = (SELECT nombre FROM menu_items WHERE id = oi.menu_item_id)
+      )
+      WHERE EXISTS (
+        SELECT 1 FROM menu_items m1, menu_items m2 
+        WHERE m1.id = oi.menu_item_id 
+        AND m2.nombre = m1.nombre 
+        AND m2.id < m1.id
+      )
+    `);
+
+    // Eliminar menu_ingredients duplicados
+    await db.query(`
+      DELETE FROM menu_ingredients mi
+      WHERE mi.menu_item_id IN (
+        SELECT m1.id FROM menu_items m1, menu_items m2
+        WHERE m1.id > m2.id AND m1.nombre = m2.nombre
+      )
+    `);
+
+    // Eliminar items del menú duplicados
     await db.query(`
       DELETE FROM menu_items m1
       USING menu_items m2

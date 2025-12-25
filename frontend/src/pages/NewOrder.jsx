@@ -201,7 +201,7 @@ export default function NewOrder() {
         </div>
 
         {/* Categorías */}
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex flex-wrap gap-2 pb-2">
           <button
             onClick={() => setSelectedCategory(null)}
             className={clsx(
@@ -230,7 +230,7 @@ export default function NewOrder() {
         </div>
 
         {/* Grid de productos */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {filteredItems.map(item => (
             <button
               key={item.id}

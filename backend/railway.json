@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "node src/database/migrate.js && node src/database/seed.js && npm start",
+    "startCommand": "node src/database/clean-duplicates.js && npm start",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

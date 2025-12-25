@@ -9,6 +9,7 @@
     "db:migrate": "node src/database/migrate.js",
     "db:seed": "node src/database/seed.js",
     "db:reset": "node src/database/reset.js",
+    "db:clean": "node src/database/clean-duplicates.js",
     "test": "jest"
   },
   "dependencies": {

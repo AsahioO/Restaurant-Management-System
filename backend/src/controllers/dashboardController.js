@@ -24,7 +24,6 @@ const getKPIs = async (req, res) => {
     `, [startDate, endDate]);
 
     // Ventas de hoy
-    const hoy = new Date().toISOString().split('T')[0];
     const ventasHoyResult = await db.query(`
       SELECT 
         COUNT(*) as ordenes_hoy,

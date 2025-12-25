@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const config = {
   env: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT, 10) || 3001,
+  port: parseInt(process.env.PORT, 10) || 3000,
   
   db: {
     host: process.env.DB_HOST || 'localhost',
@@ -18,17 +18,12 @@ const config = {
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
   
-  redis: {
-    host: process.env.REDIS_HOST || 'localhost',
-    port: parseInt(process.env.REDIS_PORT, 10) || 6379,
-  },
-  
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   },
   
   logging: {
-    level: process.env.LOG_LEVEL || 'debug',
+    level: process.env.LOG_LEVEL || 'info',
   },
 };
 

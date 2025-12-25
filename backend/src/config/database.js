@@ -2,16 +2,27 @@ const { Pool } = require('pg');
 const config = require('./index');
 const logger = require('../utils/logger');
 
-const pool = new Pool({
-  host: config.db.host,
-  port: config.db.port,
-  database: config.db.database,
-  user: config.db.user,
-  password: config.db.password,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
-});
+// Configuración para Railway (usa DATABASE_URL) o local (usa variables individuales)
+const poolConfig = process.env.DATABASE_URL
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    }
+  : {
+      host: config.db.host,
+      port: config.db.port,
+      database: config.db.database,
+      user: config.db.user,
+      password: config.db.password,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    };
+
+const pool = new Pool(poolConfig);
 
 pool.on('connect', () => {
   logger.info('Conectado a PostgreSQL');

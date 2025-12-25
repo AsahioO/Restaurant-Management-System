@@ -5,6 +5,9 @@ import toast from 'react-hot-toast'
 
 const SocketContext = createContext(null)
 
+// URL del servidor Socket.IO
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin
+
 export function SocketProvider({ children }) {
   const { user, isAuthenticated } = useAuth()
   const [socket, setSocket] = useState(null)
@@ -25,7 +28,7 @@ export function SocketProvider({ children }) {
     if (!token) return
 
     // Crear conexión Socket.IO
-    const newSocket = io(window.location.origin, {
+    const newSocket = io(SOCKET_URL, {
       auth: { token },
       transports: ['websocket', 'polling'],
       reconnection: true,

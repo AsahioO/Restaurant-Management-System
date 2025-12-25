@@ -8,8 +8,9 @@ const getKPIs = async (req, res) => {
     const { fecha_inicio, fecha_fin } = req.query;
     
     // Si no se especifican fechas, usar el día actual
-    const startDate = fecha_inicio || new Date().toISOString().split('T')[0];
-    const endDate = fecha_fin || new Date().toISOString().split('T')[0] + ' 23:59:59';
+    const hoy = new Date().toISOString().split('T')[0];
+    const startDate = fecha_inicio || hoy;
+    const endDate = fecha_fin || hoy;
 
     // Ventas totales del periodo
     const ventasResult = await db.query(`
@@ -19,7 +20,7 @@ const getKPIs = async (req, res) => {
         COALESCE(AVG(total), 0) as ticket_promedio
       FROM orders
       WHERE estado = 'cobrada'
-        AND created_at >= $1 AND created_at <= $2
+        AND DATE(created_at) >= $1 AND DATE(created_at) <= $2
     `, [startDate, endDate]);
 
     // Ventas de hoy
@@ -37,7 +38,7 @@ const getKPIs = async (req, res) => {
     const ordenesPorEstado = await db.query(`
       SELECT estado, COUNT(*) as cantidad
       FROM orders
-      WHERE created_at >= $1 AND created_at <= $2
+      WHERE DATE(created_at) >= $1 AND DATE(created_at) <= $2
       GROUP BY estado
     `, [startDate, endDate]);
 
@@ -50,7 +51,7 @@ const getKPIs = async (req, res) => {
       FROM order_items oi
       JOIN orders o ON o.id = oi.order_id
       WHERE o.estado = 'cobrada'
-        AND o.created_at >= $1 AND o.created_at <= $2
+        AND DATE(o.created_at) >= $1 AND DATE(o.created_at) <= $2
       GROUP BY oi.nombre_item
       ORDER BY cantidad_vendida DESC
       LIMIT 10

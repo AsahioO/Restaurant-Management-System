@@ -347,8 +347,9 @@ const updateOrderStatus = async (req, res) => {
     const order = existing.rows[0];
 
     // Validar transiciones de estado
+    // Cocina puede ir directo de pendiente a en_preparacion
     const allowedTransitions = {
-      'pendiente': ['confirmada', 'cancelada'],
+      'pendiente': ['confirmada', 'en_preparacion', 'cancelada'],
       'confirmada': ['en_preparacion', 'cancelada'],
       'en_preparacion': ['lista', 'cancelada'],
       'lista': ['servida'],

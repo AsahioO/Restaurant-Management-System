@@ -430,12 +430,14 @@ const updateOrderStatus = async (req, res) => {
       ipAddress: req.ip,
     });
 
-    // Emitir evento
+    // Emitir evento con info completa para notificar meseros
     req.io?.emit('order:status', { 
       orderId: parseInt(id), 
       codigo: order.codigo,
       estado,
       estadoAnterior: order.estado,
+      mesero_id: order.mesero_id,
+      mesa_numero: order.mesa_numero,
     });
 
     if (estado === 'cancelada') {

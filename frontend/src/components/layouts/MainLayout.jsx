@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useSocket } from '../../contexts/SocketContext'
+import NotificationPermission, { NotificationStatus } from '../NotificationPermission'
 import {
   LayoutDashboard,
   UtensilsCrossed,
@@ -153,6 +154,9 @@ export default function MainLayout() {
                 )}
               </div>
 
+              {/* Estado de notificaciones para meseros */}
+              <NotificationStatus />
+
               {/* Notificaciones */}
               <button className="relative p-2 rounded-lg hover:bg-gray-100">
                 <Bell className="w-5 h-5 text-gray-600" />
@@ -204,6 +208,9 @@ export default function MainLayout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Banner para pedir permisos de notificación */}
+      <NotificationPermission />
     </div>
   )
 }

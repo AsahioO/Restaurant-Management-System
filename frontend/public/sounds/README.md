@@ -1,23 +1,42 @@
 # 🔔 Sonidos Personalizados
 
-## Cómo agregar tu sonido de campana:
+## Archivos de sonido:
 
-1. Descarga o graba un sonido de campana en formato **MP3** o **WAV**
-2. Renómbralo a **`bell.mp3`** (o `bell.wav`)
-3. Colócalo en esta carpeta (`frontend/public/sounds/`)
-4. ¡Listo! El sonido se reproducirá automáticamente cuando llegue una nueva orden
+### 1. `bell.mp3` - Sonido para Cocina
+Se reproduce cuando llega una **nueva orden** al monitor de cocina.
 
-## Requisitos del archivo:
+### 2. `notification.mp3` - Sonido para Meseros
+Se reproduce cuando una orden del mesero está **lista para servir**.
+
+---
+
+## Cómo agregar tus sonidos:
+
+1. Descarga o graba sonidos en formato **MP3** o **WAV**
+2. Renómbralos según corresponda:
+   - `bell.mp3` → Cocina (nueva orden)
+   - `notification.mp3` → Meseros (orden lista)
+3. Colócalos en esta carpeta (`frontend/public/sounds/`)
+4. ¡Listo! Los sonidos se reproducirán automáticamente
+
+## Requisitos:
 - **Formato:** MP3 (recomendado) o WAV
 - **Duración:** 1-3 segundos ideal
-- **Nombre:** `bell.mp3` o `bell.wav`
+- **Nombres exactos:** `bell.mp3` y `notification.mp3`
 
-## Dónde conseguir sonidos de campana:
-- [Freesound.org](https://freesound.org/search/?q=bell) - Sonidos gratuitos
-- [Pixabay](https://pixabay.com/sound-effects/search/bell/) - Sin derechos de autor
-- [Zapsplat](https://www.zapsplat.com/sound-effect-category/bells/) - Biblioteca de sonidos
+## Dónde conseguir sonidos:
+- [Freesound.org](https://freesound.org/search/?q=notification) - Sonidos gratuitos
+- [Pixabay](https://pixabay.com/sound-effects/search/notification/) - Sin derechos de autor
+- [Zapsplat](https://www.zapsplat.com/sound-effect-category/notifications/) - Biblioteca de sonidos
 
-## Notas:
-- Si no hay archivo `bell.mp3`, se reproducirá un sonido generado automáticamente
-- Puedes probar el sonido con el botón "Probar" en el Monitor de Cocina
-- Ajusta el volumen en tu sistema operativo si es muy alto/bajo
+## Funcionalidades por rol:
+
+### 👨‍🍳 Cocina
+- Suena `bell.mp3` cuando llega nueva orden
+- Botón "Probar" para verificar sonido
+
+### 🍽️ Meseros
+- Suena `notification.mp3` cuando su orden está lista
+- Vibración en dispositivos móviles
+- Notificación push del navegador (si está activada)
+- Toast persistente por 10 segundos

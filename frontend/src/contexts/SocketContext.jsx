@@ -85,6 +85,42 @@ export function SocketProvider({ children }) {
     newSocket.on('order:status', (data) => {
       console.log('Estado de orden actualizado:', data)
       setLastUpdate({ type: 'order:status', data, timestamp: Date.now() })
+      
+      // Notificar al mesero cuando su orden está lista
+      if (data.estado === 'lista' && user?.rol === 'empleado' && data.mesero_id === user?.id) {
+        // Reproducir sonido
+        try {
+          const audio = new Audio('/sounds/notification.mp3')
+          audio.volume = 0.8
+          audio.play().catch(() => {})
+        } catch (e) {}
+        
+        // Vibrar dispositivo móvil
+        if ('vibrate' in navigator) {
+          navigator.vibrate([200, 100, 200, 100, 200]) // Patrón de vibración
+        }
+        
+        // Mostrar notificación del navegador
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('¡Orden Lista! 🍽️', {
+            body: `Orden ${data.codigo} - Mesa ${data.mesa_numero || 'S/N'} está lista para servir`,
+            icon: '/favicon.ico',
+            tag: `order-${data.orderId}`,
+            requireInteraction: true,
+            vibrate: [200, 100, 200],
+          })
+        }
+        
+        // Toast siempre visible
+        toast.success(
+          `¡Orden ${data.codigo} lista!\nMesa ${data.mesa_numero || 'S/N'}`,
+          { 
+            icon: '🔔',
+            duration: 10000,
+            style: { fontWeight: 'bold', fontSize: '16px' }
+          }
+        )
+      }
     })
 
     newSocket.on('alert:new', (data) => {

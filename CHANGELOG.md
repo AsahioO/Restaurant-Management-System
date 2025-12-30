@@ -4,6 +4,53 @@ Documentación de todas las modificaciones, errores y soluciones aplicadas despu
 
 ---
 
+## 🗓️ 30 de Diciembre, 2025
+
+### Versión 1.1.0 → 1.2.0
+
+---
+
+## ✨ Nueva Funcionalidad: Monitor de Cocina
+
+### Descripción
+Se agregó un nuevo rol **"cocina"** con un tablero Kanban en tiempo real para monitorear las órdenes de los meseros.
+
+### Características:
+- **Tablero Kanban** con 3 columnas: Pendientes, En Preparación, Listas
+- **Actualización en tiempo real** vía WebSocket
+- **Notificación sonora** cuando llegan nuevas órdenes
+- **Indicador de tiempo** transcurrido por orden (con código de colores de urgencia)
+- **Optimizado para pantallas grandes** (monitores de cocina)
+
+### Archivos Creados:
+- `frontend/src/pages/Kitchen.jsx` - Página del monitor Kanban
+
+### Archivos Modificados:
+
+**Backend:**
+- `backend/src/database/migrate.js` - Agregado 'cocina' al CHECK constraint de rol
+- `backend/src/utils/permissions.js` - Nuevo rol COCINA con permisos específicos
+- `backend/src/sockets/index.js` - Nueva función `io.emitToKitchen()`
+- `backend/src/database/seed.js` - Agregado usuario de prueba cocina@emiliacafe.com
+
+**Frontend:**
+- `frontend/src/App.jsx` - Nueva ruta `/kitchen` y redirección automática para rol cocina
+- `frontend/src/components/layouts/MainLayout.jsx` - Navegación adaptada por rol
+
+### Usuarios de Prueba:
+| Email | Contraseña | Rol |
+|-------|------------|-----|
+| cocina@emiliacafe.com | password123 | cocina |
+
+### Flujo de Trabajo:
+1. Mesero crea orden en `/orders/new`
+2. Cocina ve orden automáticamente en columna "Pendientes"
+3. Cocina hace clic en "Iniciar" → orden pasa a "En Preparación"
+4. Cocina hace clic en "Listo" → orden pasa a "Listas"
+5. Mesero recibe notificación y marca como servida
+
+---
+
 ## 🗓️ 25 de Diciembre, 2025
 
 ### Versión 1.0.0 → 1.1.0

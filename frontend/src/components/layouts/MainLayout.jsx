@@ -18,6 +18,7 @@ import {
   ChevronDown,
   Coffee,
   PlusCircle,
+  ChefHat,
 } from 'lucide-react'
 import clsx from 'clsx'
 
@@ -28,6 +29,8 @@ export default function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
+  const isCocina = user?.rol === 'cocina'
+
   const handleLogout = async () => {
     await logout()
     navigate('/login')
@@ -37,10 +40,16 @@ export default function MainLayout() {
     ...(isGerente ? [
       { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     ] : []),
-    { name: 'Nueva Orden', href: '/orders/new', icon: PlusCircle },
+    ...(isCocina ? [
+      { name: 'Monitor Cocina', href: '/kitchen', icon: ChefHat },
+    ] : []),
+    ...(!isCocina ? [
+      { name: 'Nueva Orden', href: '/orders/new', icon: PlusCircle },
+    ] : []),
     { name: 'Órdenes', href: '/orders', icon: ClipboardList },
     { name: 'Menú', href: '/menu', icon: UtensilsCrossed },
     ...(isGerente ? [
+      { name: 'Monitor Cocina', href: '/kitchen', icon: ChefHat },
       { name: 'Inventario', href: '/inventory', icon: Package },
       { name: 'Usuarios', href: '/users', icon: Users },
       { name: 'Configuración', href: '/settings', icon: Settings },

@@ -5,6 +5,7 @@ const logger = require('./logger');
 const ROLES = {
   GERENTE: 'gerente',
   EMPLEADO: 'empleado',
+  COCINA: 'cocina',
 };
 
 // Permisos por rol
@@ -36,6 +37,7 @@ const PERMISSIONS = {
     'settings:update',
     'alerts:view',
     'alerts:manage',
+    'kitchen:view',
   ],
   [ROLES.EMPLEADO]: [
     'menu:view',
@@ -43,6 +45,12 @@ const PERMISSIONS = {
     'orders:create',
     'orders:update-own',
     'alerts:view-own',
+  ],
+  [ROLES.COCINA]: [
+    'kitchen:view',
+    'orders:view',
+    'orders:update-status',
+    'alerts:view',
   ],
 };
 

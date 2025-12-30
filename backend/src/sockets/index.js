@@ -124,6 +124,11 @@ const initializeSocket = (io) => {
     io.to('role:empleado').emit(event, data);
   };
 
+  // Emitir a cocina
+  io.emitToKitchen = (event, data) => {
+    io.to('role:cocina').emit(event, data);
+  };
+
   // Emitir a un usuario específico
   io.emitToUser = (userId, event, data) => {
     io.to(`user:${userId}`).emit(event, data);

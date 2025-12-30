@@ -8,7 +8,7 @@ const createTables = async () => {
       nombre VARCHAR(100) NOT NULL,
       email VARCHAR(255) UNIQUE NOT NULL,
       password_hash VARCHAR(255) NOT NULL,
-      rol VARCHAR(20) NOT NULL CHECK (rol IN ('gerente', 'empleado')),
+      rol VARCHAR(20) NOT NULL CHECK (rol IN ('gerente', 'empleado', 'cocina')),
       activo BOOLEAN DEFAULT true,
       last_login TIMESTAMP,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

@@ -13,7 +13,8 @@ const seed = async () => {
       ('Gerente Admin', 'gerente@emiliacafe.com', $1, 'gerente'),
       ('María García', 'maria@emiliacafe.com', $1, 'empleado'),
       ('Carlos López', 'carlos@emiliacafe.com', $1, 'empleado'),
-      ('Ana Martínez', 'ana@emiliacafe.com', $1, 'empleado')
+      ('Ana Martínez', 'ana@emiliacafe.com', $1, 'empleado'),
+      ('Chef Pedro', 'cocina@emiliacafe.com', $1, 'cocina')
       ON CONFLICT (email) DO NOTHING
     `, [passwordHash]);
     console.log('✅ Usuarios creados');

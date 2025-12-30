@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard'
 import Menu from './pages/Menu'
 import Orders from './pages/Orders'
 import NewOrder from './pages/NewOrder'
+import Kitchen from './pages/Kitchen'
 import Inventory from './pages/Inventory'
 import Users from './pages/Users'
 import Settings from './pages/Settings'
@@ -72,11 +73,20 @@ function App() {
         <Route path="/" element={
           user?.rol === 'gerente' 
             ? <Dashboard /> 
+            : user?.rol === 'cocina'
+            ? <Navigate to="/kitchen" replace />
             : <Navigate to="/orders/new" replace />
         } />
         <Route path="/dashboard" element={
           <ProtectedRoute allowedRoles={['gerente']}>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+
+        {/* Cocina - solo rol cocina */}
+        <Route path="/kitchen" element={
+          <ProtectedRoute allowedRoles={['cocina', 'gerente']}>
+            <Kitchen />
           </ProtectedRoute>
         } />
 

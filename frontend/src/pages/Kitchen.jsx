@@ -269,35 +269,15 @@ export default function Kitchen() {
     
     try {
       const audio = bellAudioRef()
-      audio.currentTime = 0 // Reiniciar al inicio
-      audio.volume = 0.7 // Volumen al 70%
+      audio.currentTime = 0
+      audio.volume = 0.7
       audio.play().catch(e => {
         console.log('No se pudo reproducir audio:', e.message)
-        // Fallback: intentar con Web Audio API básico si el archivo no existe
-        playFallbackSound()
       })
     } catch (e) {
       console.log('Error de audio:', e)
-      playFallbackSound()
     }
   }, [soundEnabled, bellAudioRef])
-
-  // Sonido de respaldo si no existe el archivo
-  const playFallbackSound = useCallback(() => {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)()
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.frequency.value = 830
-      osc.type = 'sine'
-      gain.gain.setValueAtTime(0.5, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8)
-      osc.start(ctx.currentTime)
-      osc.stop(ctx.currentTime + 0.8)
-    } catch (e) {}
-  }, [])
 
   const fetchOrders = useCallback(async () => {
     try {

@@ -12,6 +12,7 @@ import {
   RefreshCw,
   Volume2,
   VolumeX,
+  Bell,
 } from 'lucide-react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
@@ -250,28 +251,81 @@ export default function Kitchen() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [lastOrderCount, setLastOrderCount] = useState(0)
 
-  // Función para reproducir sonido de notificación
-  const playNotificationSound = useCallback(() => {
-    if (soundEnabled) {
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+  // Función para reproducir sonido de campana (bell) distintivo
+  const playBellSound = useCallback(() => {
+    if (!soundEnabled) return
+    
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      const currentTime = audioContext.currentTime
+      
+      // Frecuencias de una campana real (armónicos)
+      const bellFrequencies = [
+        { freq: 830, gain: 0.6, decay: 1.5 },   // Fundamental
+        { freq: 1245, gain: 0.4, decay: 1.2 },  // 2do armónico
+        { freq: 1660, gain: 0.3, decay: 1.0 },  // 3er armónico
+        { freq: 2075, gain: 0.2, decay: 0.8 },  // 4to armónico
+        { freq: 2490, gain: 0.1, decay: 0.6 },  // 5to armónico
+      ]
+      
+      // Crear master gain para control de volumen
+      const masterGain = audioContext.createGain()
+      masterGain.gain.setValueAtTime(0.5, currentTime)
+      masterGain.connect(audioContext.destination)
+      
+      bellFrequencies.forEach(({ freq, gain, decay }) => {
         const oscillator = audioContext.createOscillator()
         const gainNode = audioContext.createGain()
         
-        oscillator.connect(gainNode)
-        gainNode.connect(audioContext.destination)
-        
-        oscillator.frequency.value = 800
         oscillator.type = 'sine'
+        oscillator.frequency.setValueAtTime(freq, currentTime)
         
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5)
+        // Envelope tipo campana: ataque rápido, decay largo
+        gainNode.gain.setValueAtTime(0, currentTime)
+        gainNode.gain.linearRampToValueAtTime(gain, currentTime + 0.01) // Ataque rápido
+        gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + decay) // Decay natural
         
-        oscillator.start(audioContext.currentTime)
-        oscillator.stop(audioContext.currentTime + 0.5)
-      } catch (e) {
-        console.log('Audio no disponible')
-      }
+        oscillator.connect(gainNode)
+        gainNode.connect(masterGain)
+        
+        oscillator.start(currentTime)
+        oscillator.stop(currentTime + decay + 0.1)
+      })
+      
+      // Reproducir dos veces (ding-ding) para mayor atención
+      setTimeout(() => {
+        if (!soundEnabled) return
+        try {
+          const ctx2 = new (window.AudioContext || window.webkitAudioContext)()
+          const time2 = ctx2.currentTime
+          const master2 = ctx2.createGain()
+          master2.gain.setValueAtTime(0.4, time2)
+          master2.connect(ctx2.destination)
+          
+          const freqs2 = [
+            { freq: 1046, gain: 0.5, decay: 1.2 },
+            { freq: 1318, gain: 0.3, decay: 1.0 },
+            { freq: 1568, gain: 0.2, decay: 0.8 },
+          ]
+          
+          freqs2.forEach(({ freq, gain, decay }) => {
+            const osc = ctx2.createOscillator()
+            const gn = ctx2.createGain()
+            osc.type = 'sine'
+            osc.frequency.setValueAtTime(freq, time2)
+            gn.gain.setValueAtTime(0, time2)
+            gn.gain.linearRampToValueAtTime(gain, time2 + 0.01)
+            gn.gain.exponentialRampToValueAtTime(0.001, time2 + decay)
+            osc.connect(gn)
+            gn.connect(master2)
+            osc.start(time2)
+            osc.stop(time2 + decay + 0.1)
+          })
+        } catch (e) {}
+      }, 400) // Segunda campana después de 400ms
+      
+    } catch (e) {
+      console.log('Audio no disponible:', e)
     }
   }, [soundEnabled])
 
@@ -288,13 +342,16 @@ export default function Kitchen() {
       )
       
       if (pendingOrders.length > lastOrderCount && lastOrderCount > 0) {
-        playNotificationSound()
-        toast('🔔 Nueva orden recibida', {
-          icon: '👨‍🍳',
+        playBellSound()
+        toast('🔔 ¡Nueva orden en cocina!', {
+          icon: '🛎️',
+          duration: 5000,
           style: {
             borderRadius: '10px',
-            background: '#333',
+            background: '#1f2937',
             color: '#fff',
+            fontSize: '16px',
+            fontWeight: 'bold',
           },
         })
       }
@@ -307,7 +364,7 @@ export default function Kitchen() {
     } finally {
       setIsLoading(false)
     }
-  }, [lastOrderCount, playNotificationSound])
+  }, [lastOrderCount, playBellSound])
 
   useEffect(() => {
     fetchOrders()
@@ -384,6 +441,18 @@ export default function Kitchen() {
               </>
             )}
           </button>
+
+          {/* Botón para probar sonido */}
+          {soundEnabled && (
+            <button
+              onClick={playBellSound}
+              className="flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg font-medium hover:bg-yellow-200 transition-all"
+              title="Probar sonido de campana"
+            >
+              <Bell className="w-5 h-5" />
+              <span className="hidden sm:inline">Probar</span>
+            </button>
+          )}
 
           {/* Botón refrescar */}
           <button

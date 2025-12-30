@@ -325,19 +325,21 @@ const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
     const isGerente = req.user.rol === 'gerente';
+    const isCocina = req.user.rol === 'cocina';
+    const canUpdateAny = isGerente || isCocina;
 
     const validStatuses = ['pendiente', 'confirmada', 'en_preparacion', 'lista', 'servida', 'cobrada', 'cancelada'];
     if (!validStatuses.includes(estado)) {
       return errorResponse(res, 'Estado inválido', 400);
     }
 
-    // Verificar que la orden existe y pertenece al usuario (si no es gerente)
+    // Verificar que la orden existe y pertenece al usuario (si no es gerente o cocina)
     let query = 'SELECT * FROM orders WHERE id = $1';
-    if (!isGerente) {
+    if (!canUpdateAny) {
       query += ' AND mesero_id = $2';
     }
 
-    const existing = await db.query(query, isGerente ? [id] : [id, req.user.id]);
+    const existing = await db.query(query, canUpdateAny ? [id] : [id, req.user.id]);
     if (existing.rows.length === 0) {
       return errorResponse(res, 'Orden no encontrada', 404);
     }

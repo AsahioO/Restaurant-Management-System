@@ -251,83 +251,53 @@ export default function Kitchen() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [lastOrderCount, setLastOrderCount] = useState(0)
 
-  // Función para reproducir sonido de campana (bell) distintivo
+  // Referencia al elemento de audio
+  const bellAudioRef = useCallback(() => {
+    // Crear o reutilizar elemento de audio
+    let audio = document.getElementById('kitchen-bell-sound')
+    if (!audio) {
+      audio = new Audio('/sounds/bell.mp3')
+      audio.id = 'kitchen-bell-sound'
+      audio.preload = 'auto'
+    }
+    return audio
+  }, [])
+
+  // Función para reproducir sonido de campana desde archivo
   const playBellSound = useCallback(() => {
     if (!soundEnabled) return
     
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-      const currentTime = audioContext.currentTime
-      
-      // Frecuencias de una campana real (armónicos)
-      const bellFrequencies = [
-        { freq: 830, gain: 0.6, decay: 1.5 },   // Fundamental
-        { freq: 1245, gain: 0.4, decay: 1.2 },  // 2do armónico
-        { freq: 1660, gain: 0.3, decay: 1.0 },  // 3er armónico
-        { freq: 2075, gain: 0.2, decay: 0.8 },  // 4to armónico
-        { freq: 2490, gain: 0.1, decay: 0.6 },  // 5to armónico
-      ]
-      
-      // Crear master gain para control de volumen
-      const masterGain = audioContext.createGain()
-      masterGain.gain.setValueAtTime(0.5, currentTime)
-      masterGain.connect(audioContext.destination)
-      
-      bellFrequencies.forEach(({ freq, gain, decay }) => {
-        const oscillator = audioContext.createOscillator()
-        const gainNode = audioContext.createGain()
-        
-        oscillator.type = 'sine'
-        oscillator.frequency.setValueAtTime(freq, currentTime)
-        
-        // Envelope tipo campana: ataque rápido, decay largo
-        gainNode.gain.setValueAtTime(0, currentTime)
-        gainNode.gain.linearRampToValueAtTime(gain, currentTime + 0.01) // Ataque rápido
-        gainNode.gain.exponentialRampToValueAtTime(0.001, currentTime + decay) // Decay natural
-        
-        oscillator.connect(gainNode)
-        gainNode.connect(masterGain)
-        
-        oscillator.start(currentTime)
-        oscillator.stop(currentTime + decay + 0.1)
+      const audio = bellAudioRef()
+      audio.currentTime = 0 // Reiniciar al inicio
+      audio.volume = 0.7 // Volumen al 70%
+      audio.play().catch(e => {
+        console.log('No se pudo reproducir audio:', e.message)
+        // Fallback: intentar con Web Audio API básico si el archivo no existe
+        playFallbackSound()
       })
-      
-      // Reproducir dos veces (ding-ding) para mayor atención
-      setTimeout(() => {
-        if (!soundEnabled) return
-        try {
-          const ctx2 = new (window.AudioContext || window.webkitAudioContext)()
-          const time2 = ctx2.currentTime
-          const master2 = ctx2.createGain()
-          master2.gain.setValueAtTime(0.4, time2)
-          master2.connect(ctx2.destination)
-          
-          const freqs2 = [
-            { freq: 1046, gain: 0.5, decay: 1.2 },
-            { freq: 1318, gain: 0.3, decay: 1.0 },
-            { freq: 1568, gain: 0.2, decay: 0.8 },
-          ]
-          
-          freqs2.forEach(({ freq, gain, decay }) => {
-            const osc = ctx2.createOscillator()
-            const gn = ctx2.createGain()
-            osc.type = 'sine'
-            osc.frequency.setValueAtTime(freq, time2)
-            gn.gain.setValueAtTime(0, time2)
-            gn.gain.linearRampToValueAtTime(gain, time2 + 0.01)
-            gn.gain.exponentialRampToValueAtTime(0.001, time2 + decay)
-            osc.connect(gn)
-            gn.connect(master2)
-            osc.start(time2)
-            osc.stop(time2 + decay + 0.1)
-          })
-        } catch (e) {}
-      }, 400) // Segunda campana después de 400ms
-      
     } catch (e) {
-      console.log('Audio no disponible:', e)
+      console.log('Error de audio:', e)
+      playFallbackSound()
     }
-  }, [soundEnabled])
+  }, [soundEnabled, bellAudioRef])
+
+  // Sonido de respaldo si no existe el archivo
+  const playFallbackSound = useCallback(() => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.frequency.value = 830
+      osc.type = 'sine'
+      gain.gain.setValueAtTime(0.5, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8)
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 0.8)
+    } catch (e) {}
+  }, [])
 
   const fetchOrders = useCallback(async () => {
     try {

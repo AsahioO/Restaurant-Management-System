@@ -13,7 +13,7 @@ import {
   Utensils,
   CreditCard,
   RefreshCw,
-  HandPlatter,
+  Check,
 } from 'lucide-react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
@@ -259,7 +259,7 @@ function OrderCard({ order, formatCurrency, formatTime, onStatusChange, onViewDe
               onClick={() => onStatusChange(order.id, 'servida')}
               className="btn-sm flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold flex items-center justify-center gap-1"
             >
-              <HandPlatter className="w-4 h-4" />
+              <Check className="w-4 h-4" />
               Servida
             </button>
           )}

@@ -14,6 +14,7 @@ import {
   Loader2,
   Mail,
   Phone,
+  ChefHat,
 } from 'lucide-react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
@@ -174,10 +175,12 @@ export default function Users() {
                   'badge',
                   user.rol === 'gerente' 
                     ? 'bg-primary-100 text-primary-800' 
+                    : user.rol === 'cocina'
+                    ? 'bg-blue-100 text-blue-800'
                     : 'bg-accent-100 text-accent-800'
                 )}>
-                  {user.rol === 'gerente' ? <Shield className="w-3 h-3 mr-1" /> : <User className="w-3 h-3 mr-1" />}
-                  {user.rol === 'gerente' ? 'Gerente' : 'Empleado'}
+                  {user.rol === 'gerente' ? <Shield className="w-3 h-3 mr-1" /> : user.rol === 'cocina' ? <ChefHat className="w-3 h-3 mr-1" /> : <User className="w-3 h-3 mr-1" />}
+                  {user.rol === 'gerente' ? 'Gerente' : user.rol === 'cocina' ? 'Cocina' : 'Empleado'}
                 </span>
                 <span className={clsx(
                   'badge',
@@ -348,9 +351,10 @@ function UserFormModal({ user, onClose, onSubmit }) {
 
           <div>
             <label className="label">Rol</label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {[
                 { value: 'empleado', label: 'Empleado', icon: User },
+                { value: 'cocina', label: 'Cocina', icon: ChefHat },
                 { value: 'gerente', label: 'Gerente', icon: Shield },
               ].map(option => (
                 <button

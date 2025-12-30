@@ -116,6 +116,7 @@ export default function Login() {
           <div className="space-y-1 text-xs text-gray-600">
             <p><span className="font-medium">Gerente:</span> gerente@emiliacafe.com</p>
             <p><span className="font-medium">Empleado:</span> maria@emiliacafe.com</p>
+            <p><span className="font-medium">Cocina:</span> cocina@emiliacafe.com</p>
             <p><span className="font-medium">Contraseña:</span> password123</p>
           </div>
         </div>

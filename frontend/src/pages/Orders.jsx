@@ -13,6 +13,7 @@ import {
   Utensils,
   CreditCard,
   RefreshCw,
+  HandPlatter,
 } from 'lucide-react'
 import clsx from 'clsx'
 import toast from 'react-hot-toast'
@@ -251,6 +252,17 @@ function OrderCard({ order, formatCurrency, formatTime, onStatusChange, onViewDe
             <Eye className="w-4 h-4 mr-1" />
             Detalles
           </button>
+          
+          {/* Botón para que mesero confirme que sirvió la orden */}
+          {order.estado === 'lista' && (
+            <button
+              onClick={() => onStatusChange(order.id, 'servida')}
+              className="btn-sm flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold flex items-center justify-center gap-1"
+            >
+              <HandPlatter className="w-4 h-4" />
+              Servida
+            </button>
+          )}
           
           {isGerente && nextStatus[order.estado] && (
             <button

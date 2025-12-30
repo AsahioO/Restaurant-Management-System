@@ -12,6 +12,7 @@ const getOrders = async (req, res) => {
     } = req.query;
     const { offset } = paginate(page, limit);
     const isGerente = req.user.rol === 'gerente';
+    const isCocina = req.user.rol === 'cocina';
 
     let query = `
       SELECT o.*, u.nombre as mesero_nombre,
@@ -20,6 +21,7 @@ const getOrders = async (req, res) => {
             'id', oi.id,
             'menu_item_id', oi.menu_item_id,
             'nombre_item', oi.nombre_item,
+            'producto_nombre', oi.nombre_item,
             'cantidad', oi.cantidad,
             'precio_unitario', oi.precio_unitario,
             'subtotal', oi.subtotal,
@@ -34,17 +36,28 @@ const getOrders = async (req, res) => {
     const params = [];
     let paramCount = 0;
 
-    // Empleados solo ven sus órdenes
-    if (!isGerente) {
+    // Empleados solo ven sus órdenes, cocina y gerente ven todas
+    if (!isGerente && !isCocina) {
       paramCount++;
       query += ` AND o.mesero_id = $${paramCount}`;
       params.push(req.user.id);
     }
 
+    // Soporte para múltiples estados separados por coma
     if (estado) {
-      paramCount++;
-      query += ` AND o.estado = $${paramCount}`;
-      params.push(estado);
+      const estados = estado.split(',').map(e => e.trim());
+      if (estados.length === 1) {
+        paramCount++;
+        query += ` AND o.estado = $${paramCount}`;
+        params.push(estados[0]);
+      } else {
+        const placeholders = estados.map((_, i) => `$${paramCount + i + 1}`).join(', ');
+        query += ` AND o.estado IN (${placeholders})`;
+        estados.forEach(e => {
+          paramCount++;
+          params.push(e);
+        });
+      }
     }
 
     if (mesa_id) {

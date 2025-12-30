@@ -252,7 +252,7 @@ function OrderCard({ order, formatCurrency, formatTime, onStatusChange, onViewDe
             Detalles
           </button>
           
-          {nextStatus[order.estado] && (
+          {isGerente && nextStatus[order.estado] && (
             <button
               onClick={() => onStatusChange(order.id, nextStatus[order.estado])}
               className="btn-primary btn-sm flex-1"
@@ -261,7 +261,7 @@ function OrderCard({ order, formatCurrency, formatTime, onStatusChange, onViewDe
             </button>
           )}
           
-          {order.estado !== 'cancelada' && order.estado !== 'cobrada' && (
+          {isGerente && order.estado !== 'cancelada' && order.estado !== 'cobrada' && (
             <button
               onClick={() => onStatusChange(order.id, 'cancelada')}
               className="btn-ghost btn-sm text-red-600 hover:bg-red-50"

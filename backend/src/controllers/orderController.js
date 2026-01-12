@@ -346,6 +346,15 @@ const updateOrderStatus = async (req, res) => {
 
     const order = existing.rows[0];
 
+    // Los empleados (meseros) SOLO pueden cambiar de 'lista' a 'servida'
+    // Cualquier otro cambio de estado requiere ser gerente o cocina
+    const isEmpleado = req.user.rol === 'empleado';
+    if (isEmpleado) {
+      if (order.estado !== 'lista' || estado !== 'servida') {
+        return errorResponse(res, 'No tienes permisos para cambiar este estado', 403);
+      }
+    }
+
     // Validar transiciones de estado
     // Cocina puede ir directo de pendiente a en_preparacion
     const allowedTransitions = {

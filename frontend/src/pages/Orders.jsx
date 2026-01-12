@@ -29,7 +29,7 @@ const STATUS_CONFIG = {
 }
 
 export default function Orders() {
-  const { isGerente } = useAuth()
+  const { isGerente, user } = useAuth()
   const { lastUpdate } = useSocket()
   const [orders, setOrders] = useState([])
   const [selectedOrder, setSelectedOrder] = useState(null)
@@ -171,6 +171,7 @@ export default function Orders() {
           onClose={() => setSelectedOrder(null)}
           formatCurrency={formatCurrency}
           onStatusChange={handleStatusChange}
+          userRole={user?.rol}
         />
       )}
     </div>
@@ -287,8 +288,9 @@ function OrderCard({ order, formatCurrency, formatTime, onStatusChange, onViewDe
   )
 }
 
-function OrderDetailModal({ order, onClose, formatCurrency, onStatusChange }) {
+function OrderDetailModal({ order, onClose, formatCurrency, onStatusChange, userRole }) {
   const statusConfig = STATUS_CONFIG[order.estado]
+  const canChangeStatus = userRole === 'gerente' || userRole === 'cocina'
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -316,16 +318,31 @@ function OrderDetailModal({ order, onClose, formatCurrency, onStatusChange }) {
           {/* Estado actual */}
           <div className="mb-6">
             <label className="label">Estado</label>
-            <select
-              value={order.estado}
-              onChange={(e) => onStatusChange(order.id, e.target.value)}
-              className="input"
-              disabled={order.estado === 'cobrada' || order.estado === 'cancelada'}
-            >
-              {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                <option key={key} value={key}>{config.label}</option>
-              ))}
-            </select>
+            {canChangeStatus ? (
+              <select
+                value={order.estado}
+                onChange={(e) => onStatusChange(order.id, e.target.value)}
+                className="input"
+                disabled={order.estado === 'cobrada' || order.estado === 'cancelada'}
+              >
+                {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+                  <option key={key} value={key}>{config.label}</option>
+                ))}
+              </select>
+            ) : (
+              <div className={clsx(
+                'px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-2',
+                order.estado === 'pendiente' && 'bg-yellow-100 text-yellow-800',
+                order.estado === 'confirmada' && 'bg-orange-100 text-orange-800',
+                order.estado === 'en_preparacion' && 'bg-blue-100 text-blue-800',
+                order.estado === 'lista' && 'bg-purple-100 text-purple-800',
+                order.estado === 'servida' && 'bg-indigo-100 text-indigo-800',
+                order.estado === 'cobrada' && 'bg-green-100 text-green-800',
+                order.estado === 'cancelada' && 'bg-red-100 text-red-800',
+              )}>
+                {statusConfig.label}
+              </div>
+            )}
           </div>
 
           {/* Ítems */}

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pushService = require('../services/pushService');
-const { successResponse, errorResponse } = require('../utils/responses');
+const { successResponse, errorResponse } = require('../utils/helpers');
 const logger = require('../utils/logger');
 
 /**

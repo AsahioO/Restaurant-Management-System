@@ -7,11 +7,18 @@ const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_EMAIL = process.env.VAPID_EMAIL || 'mailto:admin@emiliacafe.com';
 
-if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
-  webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
-  logger.info('✅ Web Push configurado correctamente');
-} else {
-  logger.warn('⚠️ VAPID keys no configuradas - Push notifications deshabilitadas');
+let pushEnabled = false;
+
+try {
+  if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
+    webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    pushEnabled = true;
+    logger.info('✅ Web Push configurado correctamente');
+  } else {
+    logger.warn('⚠️ VAPID keys no configuradas - Push notifications deshabilitadas');
+  }
+} catch (error) {
+  logger.error('Error configurando Web Push:', error.message);
 }
 
 /**

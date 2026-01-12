@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #f472b6;
-  --color-accent: #ec4899;
+  --color-primary: #f3d3ed;
+  --color-accent: #eb7cc1;
 }
 
 * {

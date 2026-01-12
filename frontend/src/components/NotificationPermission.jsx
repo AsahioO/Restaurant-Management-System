@@ -115,6 +115,7 @@ export default function NotificationPermission() {
 export function NotificationStatus() {
   const { user } = useAuth()
   const [permission, setPermission] = useState('default')
+  const [isSubscribing, setIsSubscribing] = useState(false)
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -122,46 +123,68 @@ export function NotificationStatus() {
     }
   }, [])
 
-  const requestPermission = async () => {
-    if ('Notification' in window) {
-      const result = await Notification.requestPermission()
-      setPermission(result)
+  const handleClick = async () => {
+    if (permission === 'granted') {
+      // Ya tiene permisos, mostrar tooltip o no hacer nada
+      return
+    }
+
+    setIsSubscribing(true)
+    try {
+      if ('Notification' in window) {
+        const result = await Notification.requestPermission()
+        setPermission(result)
+        
+        if (result === 'granted' && isPushSupported()) {
+          await subscribeToPush()
+          toast.success('¡Notificaciones activadas!')
+        }
+      }
+    } catch (error) {
+      console.error('Error activando notificaciones:', error)
+      toast.error('Error activando notificaciones')
+    } finally {
+      setIsSubscribing(false)
     }
   }
 
-  if (user?.rol !== 'empleado') return null
+  // Mostrar para empleados y cocina
+  if (!user || (user.rol !== 'empleado' && user.rol !== 'cocina')) return null
 
   return (
     <button
-      onClick={requestPermission}
+      onClick={handleClick}
+      disabled={isSubscribing || permission === 'granted'}
       className={clsx(
-        'flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors',
+        'relative p-2 rounded-full transition-colors',
         permission === 'granted'
-          ? 'bg-green-100 text-green-700'
+          ? 'text-green-600 bg-green-50 cursor-default'
           : permission === 'denied'
-          ? 'bg-red-100 text-red-700'
-          : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+          ? 'text-red-500 bg-red-50 cursor-not-allowed'
+          : 'text-gray-500 hover:bg-gray-100 hover:text-primary-600'
       )}
       title={
         permission === 'granted'
           ? 'Notificaciones activadas'
           : permission === 'denied'
-          ? 'Notificaciones bloqueadas'
-          : 'Clic para activar notificaciones'
+          ? 'Notificaciones bloqueadas en el navegador'
+          : 'Activar notificaciones push'
       }
     >
-      {permission === 'granted' ? (
-        <Bell className="w-3.5 h-3.5" />
+      {isSubscribing ? (
+        <div className="w-5 h-5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+      ) : permission === 'granted' ? (
+        <Bell className="w-5 h-5" />
       ) : (
-        <BellOff className="w-3.5 h-3.5" />
+        <BellOff className="w-5 h-5" />
       )}
-      <span className="hidden sm:inline">
-        {permission === 'granted'
-          ? 'Notif. ON'
-          : permission === 'denied'
-          ? 'Bloqueadas'
-          : 'Activar'}
-      </span>
+      {/* Indicador de estado */}
+      {permission === 'granted' && (
+        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white" />
+      )}
+      {permission === 'default' && (
+        <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-yellow-500 rounded-full border-2 border-white animate-pulse" />
+      )}
     </button>
   )
 }

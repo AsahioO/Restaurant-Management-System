@@ -249,6 +249,67 @@ reportQueue.process('daily-sales', async (job) => {
 
 ## 💼 Funcionalidades de Negocio
 
+### Sistema de Caja (Rol "Caja")
+**Prioridad:** 🔴 Alta  
+**Complejidad:** Media
+
+Crear un rol dedicado para cajeros con vista especializada de cobro.
+
+**Características:**
+- Vista de Caja (`/cashier`) - Ver órdenes "servidas" pendientes de cobro
+- Selección de método de pago (efectivo, tarjeta, transferencia)
+- Calculadora de cambio para pagos en efectivo
+- Generación de ticket/recibo (opcional)
+- Corte de caja diario con resumen de ventas
+
+**Permisos por rol:**
+| Rol | Cobrar órdenes |
+|-----|----------------|
+| Gerente | ✅ Todas |
+| Caja | ✅ Todas |
+| Mesero | ✅ Solo las propias |
+| Cocina | ❌ No |
+
+**Cambios en base de datos:**
+```sql
+-- Agregar 'caja' al constraint de rol
+ALTER TABLE users DROP CONSTRAINT users_rol_check;
+ALTER TABLE users ADD CONSTRAINT users_rol_check 
+  CHECK (rol IN ('gerente', 'empleado', 'cocina', 'caja'));
+
+-- Agregar método de pago a orders
+ALTER TABLE orders ADD COLUMN metodo_pago VARCHAR(20);
+ALTER TABLE orders ADD COLUMN monto_recibido DECIMAL(10,2);
+ALTER TABLE orders ADD COLUMN cambio DECIMAL(10,2);
+
+-- Tabla para cortes de caja
+CREATE TABLE cash_register_cuts (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id),
+  fecha DATE NOT NULL,
+  total_efectivo DECIMAL(10,2) DEFAULT 0,
+  total_tarjeta DECIMAL(10,2) DEFAULT 0,
+  total_transferencia DECIMAL(10,2) DEFAULT 0,
+  total_general DECIMAL(10,2) DEFAULT 0,
+  ordenes_cobradas INTEGER DEFAULT 0,
+  notas TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+**Archivos a crear:**
+- `frontend/src/pages/Cashier.jsx` - Vista de caja
+- `backend/src/controllers/cashController.js` - Lógica de cobro
+- `backend/src/routes/cash.js` - Rutas de caja
+
+**Archivos a modificar:**
+- `backend/src/utils/permissions.js` - Agregar rol CAJA
+- `backend/src/database/migrate.js` - Actualizar constraint
+- `frontend/src/App.jsx` - Agregar ruta /cashier
+- `frontend/src/components/layouts/MainLayout.jsx` - Navegación
+
+---
+
 ### Reportes PDF
 **Prioridad:** 🔴 Alta  
 **Complejidad:** Media

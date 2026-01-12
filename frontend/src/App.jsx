@@ -5,6 +5,10 @@ import { useAuth } from './contexts/AuthContext'
 import MainLayout from './components/layouts/MainLayout'
 import AuthLayout from './components/layouts/AuthLayout'
 
+// Components
+import PWAUpdatePrompt from './components/PWAUpdatePrompt'
+import OfflineIndicator from './components/OfflineIndicator'
+
 // Pages
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -55,7 +59,10 @@ function App() {
   }
 
   return (
-    <Routes>
+    <>
+      <PWAUpdatePrompt />
+      <OfflineIndicator />
+      <Routes>
       {/* Rutas públicas */}
       <Route element={<AuthLayout />}>
         <Route path="/login" element={
@@ -122,6 +129,7 @@ function App() {
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   )
 }
 

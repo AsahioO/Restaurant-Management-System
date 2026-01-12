@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3d3ed"/>
+      <stop offset="100%" style="stop-color:#dc8fc9"/>
+    </linearGradient>
+  </defs>
+  <!-- Full background for maskable icon (safe zone is 80% centered) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <g transform="translate(140, 120)" fill="#6f3a61">
+    <!-- Coffee cup - centered in safe zone -->
+    <path d="M30,40 L30,160 C30,180 50,200 100,200 L130,200 C180,200 200,180 200,160 L200,40 Z" fill="none" stroke="#6f3a61" stroke-width="12"/>
+    <path d="M200,70 L220,70 C250,70 265,100 258,135 C250,165 230,165 200,165" fill="none" stroke="#6f3a61" stroke-width="12"/>
+    <!-- Steam -->
+    <path d="M70,10 Q80,-15 70,-40 Q60,-60 70,-80" fill="none" stroke="#a85596" stroke-width="8" stroke-linecap="round"/>
+    <path d="M115,10 Q125,-15 115,-40 Q105,-60 115,-80" fill="none" stroke="#a85596" stroke-width="8" stroke-linecap="round"/>
+    <path d="M160,10 Q170,-15 160,-40 Q150,-60 160,-80" fill="none" stroke="#a85596" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text x="256" y="380" text-anchor="middle" font-family="serif" font-size="40" font-weight="bold" fill="#6f3a61">Emilia Café</text>
+</svg>

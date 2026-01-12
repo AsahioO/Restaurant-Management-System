@@ -4,6 +4,85 @@ Documentación de todas las modificaciones, errores y soluciones aplicadas despu
 
 ---
 
+## 🗓️ 12 de Enero, 2026
+
+### Versión 1.2.0 → 1.3.0
+
+---
+
+## ✨ Nueva Funcionalidad: Progressive Web App (PWA)
+
+### Descripción
+La aplicación ha sido convertida en una **Progressive Web App** completa, permitiendo instalación en dispositivos móviles y escritorio, funcionamiento offline y actualizaciones automáticas.
+
+### Características PWA:
+- **Instalable** en móviles (Android/iOS) y escritorio (Windows/Mac/Linux)
+- **Funcionamiento offline** con Service Worker y cache inteligente
+- **Actualizaciones automáticas** con notificación al usuario
+- **Indicador de conexión** (online/offline) en tiempo real
+- **Splash screen** personalizado
+- **Iconos adaptables** (maskable) para todas las plataformas
+
+### Archivos Creados:
+- `frontend/src/components/PWAUpdatePrompt.jsx` - Componente de actualización y prompt de instalación
+- `frontend/src/components/OfflineIndicator.jsx` - Indicador de estado de conexión
+- `frontend/public/icons/icon-192x192.svg` - Icono PWA 192px
+- `frontend/public/icons/icon-512x512.svg` - Icono PWA 512px
+- `frontend/public/icons/maskable-icon.svg` - Icono maskable para Android
+
+### Archivos Modificados:
+- `frontend/vite.config.js` - Configuración de vite-plugin-pwa con workbox
+- `frontend/index.html` - Meta tags para PWA y Apple Web App
+- `frontend/src/App.jsx` - Integración de componentes PWA
+- `frontend/package.json` - Dependencias vite-plugin-pwa y workbox-window
+
+### Estrategia de Cache:
+| Recurso | Estrategia | Duración |
+|---------|------------|----------|
+| Fuentes Google | CacheFirst | 1 año |
+| Assets estáticos | Precache | Permanente |
+| API calls | NetworkFirst | 5 minutos |
+| Sonidos/Iconos | Precache | Permanente |
+
+### Instalación:
+1. Acceder a la app desde Chrome/Edge/Safari
+2. Aparecerá un banner de instalación automáticamente
+3. O usar menú del navegador → "Instalar aplicación"
+
+### Comportamiento Offline:
+- Las páginas cacheadas funcionan sin conexión
+- Se muestra indicador "Sin conexión" cuando no hay internet
+- Al reconectar, muestra "Conexión restaurada"
+- Los datos del API se cachean temporalmente
+
+---
+
+## 🎨 Cambio de Paleta de Colores
+
+### Descripción
+Se actualizó la paleta de colores predominante a **rosa pastel** (#f3d3ed) para una apariencia más suave y moderna.
+
+### Nueva Paleta Primary:
+| Tono | Color Hex | Uso |
+|------|-----------|-----|
+| 50 | #fdf8fc | Fondos sutiles |
+| 100 | #fbf0f8 | Fondos claros |
+| 200 | #f8e4f2 | Hover claros |
+| **300** | **#f3d3ed** | **Color base** |
+| 400 | #e9b5dd | Decorativos |
+| 500 | #dc8fc9 | Énfasis |
+| 600 | #c76eb2 | Iconos |
+| 700 | #a85596 | Botones |
+| 800 | #8a4679 | Hover botones |
+| 900 | #6f3a61 | Sidebar |
+| 950 | #4a1f40 | Texto oscuro |
+
+### Archivos Modificados:
+- `frontend/tailwind.config.js` - Nueva paleta de colores
+- `frontend/src/index.css` - Variables CSS actualizadas
+
+---
+
 ## 🗓️ 30 de Diciembre, 2025
 
 ### Versión 1.1.0 → 1.2.0

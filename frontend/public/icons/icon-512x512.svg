@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3d3ed"/>
+      <stop offset="100%" style="stop-color:#dc8fc9"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="80" fill="url(#bg)"/>
+  <g transform="translate(96, 80)" fill="#6f3a61">
+    <!-- Coffee cup -->
+    <path d="M50,60 L50,240 C50,270 80,300 140,300 L180,300 C240,300 270,270 270,240 L270,60 Z" fill="none" stroke="#6f3a61" stroke-width="16"/>
+    <path d="M270,100 L300,100 C340,100 360,140 350,190 C340,230 310,230 270,230" fill="none" stroke="#6f3a61" stroke-width="16"/>
+    <!-- Steam -->
+    <path d="M100,20 Q115,-15 100,-50 Q85,-85 100,-110" fill="none" stroke="#a85596" stroke-width="10" stroke-linecap="round"/>
+    <path d="M160,20 Q175,-15 160,-50 Q145,-85 160,-110" fill="none" stroke="#a85596" stroke-width="10" stroke-linecap="round"/>
+    <path d="M220,20 Q235,-15 220,-50 Q205,-85 220,-110" fill="none" stroke="#a85596" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <text x="256" y="460" text-anchor="middle" font-family="serif" font-size="56" font-weight="bold" fill="#6f3a61">Emilia Café</text>
+</svg>

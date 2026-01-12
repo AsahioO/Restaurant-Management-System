@@ -174,6 +174,18 @@ const createTables = async () => {
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
 
+    // Tabla de suscripciones push
+    `CREATE TABLE IF NOT EXISTS push_subscriptions (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      endpoint TEXT NOT NULL UNIQUE,
+      keys_p256dh TEXT NOT NULL,
+      keys_auth TEXT NOT NULL,
+      user_agent TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`,
+
     // Índices para mejorar rendimiento
     `CREATE INDEX IF NOT EXISTS idx_orders_estado ON orders(estado)`,
     `CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at)`,

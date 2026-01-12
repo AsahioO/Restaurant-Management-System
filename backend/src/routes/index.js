@@ -7,6 +7,8 @@ const menuRoutes = require('./menu');
 const inventoryRoutes = require('./inventory');
 const orderRoutes = require('./orders');
 const dashboardRoutes = require('./dashboard');
+const pushRoutes = require('./push');
+const { authenticate } = require('../middleware/auth');
 
 // Health check
 router.get('/health', (req, res) => {
@@ -24,5 +26,6 @@ router.use('/menu', menuRoutes);
 router.use('/inventory', inventoryRoutes);
 router.use('/orders', orderRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/push', authenticate, pushRoutes);
 
 module.exports = router;

@@ -2,6 +2,7 @@ const db = require('../config/database');
 const { successResponse, errorResponse, paginate, generateOrderCode, calculateItemAvailability } = require('../utils/helpers');
 const { logAuditAction } = require('../utils/permissions');
 const logger = require('../utils/logger');
+const pushService = require('../services/pushService');
 
 // Obtener órdenes
 const getOrders = async (req, res) => {
@@ -448,6 +449,22 @@ const updateOrderStatus = async (req, res) => {
       mesero_id: order.mesero_id,
       mesa_numero: order.mesa_numero,
     });
+
+    // Enviar push notification cuando la orden está lista
+    if (estado === 'lista' && order.mesero_id) {
+      try {
+        await pushService.notifyOrderReady({
+          id: order.id,
+          codigo: order.codigo,
+          mesa_numero: order.mesa_numero,
+          mesero_id: order.mesero_id
+        });
+        logger.info(`Push notification enviada al mesero ${order.mesero_id} para orden ${order.codigo}`);
+      } catch (pushError) {
+        logger.error('Error enviando push notification:', pushError);
+        // No fallar la request si el push falla
+      }
+    }
 
     if (estado === 'cancelada') {
       req.io?.emit('inventory:update', { action: 'order_cancelled' });

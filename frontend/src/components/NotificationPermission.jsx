@@ -1,19 +1,27 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { Bell, BellOff, X } from 'lucide-react'
+import { subscribeToPush, isPushSupported } from '../services/pushService'
+import toast from 'react-hot-toast'
 import clsx from 'clsx'
 
 export default function NotificationPermission() {
   const { user } = useAuth()
   const [permission, setPermission] = useState('default')
   const [showBanner, setShowBanner] = useState(false)
+  const [isSubscribing, setIsSubscribing] = useState(false)
 
   useEffect(() => {
-    // Solo mostrar para empleados (meseros)
-    if (user?.rol !== 'empleado') return
+    // Mostrar para empleados (meseros) y cocina
+    if (!user || (user.rol !== 'empleado' && user.rol !== 'cocina')) return
     
     if ('Notification' in window) {
       setPermission(Notification.permission)
+      
+      // Si ya tiene permiso, intentar suscribir silenciosamente
+      if (Notification.permission === 'granted') {
+        subscribeToPush().catch(console.error)
+      }
       
       // Mostrar banner si no ha decidido
       if (Notification.permission === 'default') {
@@ -22,20 +30,35 @@ export default function NotificationPermission() {
         return () => clearTimeout(timer)
       }
     }
-  }, [user?.rol])
+  }, [user?.rol, user?.id])
 
   const requestPermission = async () => {
     if ('Notification' in window) {
-      const result = await Notification.requestPermission()
-      setPermission(result)
-      setShowBanner(false)
+      setIsSubscribing(true)
       
-      if (result === 'granted') {
-        // Mostrar notificación de prueba
-        new Notification('¡Notificaciones activadas! 🔔', {
-          body: 'Recibirás alertas cuando tus órdenes estén listas',
-          icon: '/favicon.ico',
-        })
+      try {
+        const result = await Notification.requestPermission()
+        setPermission(result)
+        
+        if (result === 'granted') {
+          // Suscribir a push notifications
+          if (isPushSupported()) {
+            await subscribeToPush()
+            toast.success('¡Notificaciones push activadas!')
+          }
+          
+          // Mostrar notificación de prueba
+          new Notification('¡Notificaciones activadas! 🔔', {
+            body: 'Recibirás alertas cuando tus órdenes estén listas',
+            icon: '/icons/icon-192x192.svg',
+          })
+        }
+      } catch (error) {
+        console.error('Error activando notificaciones:', error)
+        toast.error('Error activando notificaciones')
+      } finally {
+        setIsSubscribing(false)
+        setShowBanner(false)
       }
     }
   }
@@ -44,7 +67,7 @@ export default function NotificationPermission() {
     setShowBanner(false)
   }
 
-  if (!showBanner || user?.rol !== 'empleado') return null
+  if (!showBanner || !user || (user.rol !== 'empleado' && user.rol !== 'cocina')) return null
 
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 z-50 animate-fade-in">
@@ -58,14 +81,15 @@ export default function NotificationPermission() {
               Activar notificaciones
             </h3>
             <p className="text-sm text-gray-600 mt-1">
-              Recibe alertas cuando tus órdenes estén listas para servir, incluso si el navegador está minimizado.
+              Recibe alertas cuando tus órdenes estén listas, <strong>incluso con la app cerrada</strong>.
             </p>
             <div className="flex gap-2 mt-3">
               <button
                 onClick={requestPermission}
+                disabled={isSubscribing}
                 className="btn-primary btn-sm"
               >
-                Activar
+                {isSubscribing ? 'Activando...' : 'Activar'}
               </button>
               <button
                 onClick={dismissBanner}

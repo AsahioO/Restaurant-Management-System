@@ -6,8 +6,11 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.js',
       registerType: 'prompt',
-      includeAssets: ['coffee.svg', 'sounds/*.mp3', 'icons/*.svg'],
+      includeAssets: ['coffee.svg', 'sounds/*.mp3', 'icons/*.svg', 'sw-push.js'],
       manifest: {
         name: 'Emilia Café - Sistema de Gestión',
         short_name: 'Emilia Café',
@@ -56,56 +59,8 @@ export default defineConfig({
           }
         ]
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}'],
-        cleanupOutdatedCaches: true,
-        clientsClaim: true,
-        skipWaiting: false,
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 año
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'gstatic-fonts-cache',
-              expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 año
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
-            urlPattern: /\/api\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 5 // 5 minutos
-              },
-              networkTimeoutSeconds: 10,
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,woff,woff2}']
       },
       devOptions: {
         enabled: true,

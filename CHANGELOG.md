@@ -6,6 +6,135 @@ Documentación de todas las modificaciones, errores y soluciones aplicadas despu
 
 ## 🗓️ 12 de Enero, 2026
 
+### Versión 1.3.0 → 1.4.0
+
+---
+
+## 🔔 Nueva Funcionalidad: Web Push Notifications
+
+### Descripción
+Implementación de **notificaciones push reales** que funcionan incluso con la aplicación cerrada o el teléfono con pantalla apagada. Los meseros reciben alertas cuando sus órdenes están listas.
+
+### Características:
+- **Notificaciones en segundo plano** - Funcionan con app cerrada
+- **Vibración y sonido** en dispositivos móviles
+- **Click en notificación** abre la orden directamente
+- **Suscripción automática** al activar notificaciones
+- **Icono de campanita** en header para estado/activación manual
+
+### Archivos Creados (Backend):
+- `backend/src/services/pushService.js` - Servicio de envío de push notifications
+- `backend/src/routes/push.js` - Endpoints para suscripción/desuscripción
+
+### Archivos Creados (Frontend):
+- `frontend/src/services/pushService.js` - Cliente para manejar suscripciones push
+- `frontend/src/sw.js` - Service Worker personalizado con manejo de eventos push
+
+### Archivos Modificados:
+- `backend/src/controllers/orderController.js` - Envía push cuando orden está "lista"
+- `backend/src/routes/index.js` - Registro de rutas push
+- `backend/src/database/migrate.js` - Tabla push_subscriptions
+- `frontend/src/components/NotificationPermission.jsx` - Integración con push service
+- `frontend/src/components/layouts/MainLayout.jsx` - Icono de campanita simplificado
+- `frontend/vite.config.js` - Configuración injectManifest para SW personalizado
+
+### Variables de Entorno Requeridas:
+```
+VAPID_PUBLIC_KEY=<clave_publica>
+VAPID_PRIVATE_KEY=<clave_privada>
+VAPID_EMAIL=mailto:admin@tudominio.com
+```
+
+### Tabla de Base de Datos:
+```sql
+CREATE TABLE push_subscriptions (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  endpoint TEXT NOT NULL UNIQUE,
+  keys_p256dh TEXT NOT NULL,
+  keys_auth TEXT NOT NULL,
+  user_agent TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+### Flujo de Notificación:
+1. Mesero activa notificaciones (click en campanita)
+2. Navegador pide permiso → Usuario acepta
+3. Se crea suscripción push y se guarda en BD
+4. Cocina cambia orden a "Lista"
+5. Backend envía push notification al mesero
+6. Mesero recibe notificación incluso con app cerrada
+
+---
+
+## 🔒 Corrección de Seguridad: Permisos de Estado de Órdenes
+
+### Problema
+Los meseros podían cambiar el estado de cualquier orden desde el modal de detalles, cuando solo deberían poder marcar sus órdenes como "Servida".
+
+### Solución
+- **Frontend**: El select de estado ahora solo aparece para gerentes y cocina
+- **Frontend**: Meseros ven solo un badge de solo lectura con el estado
+- **Backend**: Validación que empleados SOLO pueden cambiar `lista` → `servida`
+
+### Permisos Actualizados:
+| Rol | Cambiar Estado | Excepción |
+|-----|----------------|-----------|
+| Gerente | ✅ Todos | - |
+| Cocina | ✅ Todos | - |
+| Empleado | ❌ No | Solo `lista` → `servida` |
+
+### Archivos Modificados:
+- `frontend/src/pages/Orders.jsx` - Condicional para mostrar select/badge
+- `backend/src/controllers/orderController.js` - Validación de permisos
+
+---
+
+## 🎨 Mejora de UI: Icono de Notificaciones
+
+### Descripción
+Se simplificó el indicador de notificaciones en el header a un solo icono de campanita.
+
+### Antes:
+- Badge con texto "Notif. ON" o "Activar"
+- Campanita decorativa adicional
+
+### Después:
+- Solo un icono de campanita
+- Punto verde = Activadas
+- Punto amarillo pulsante = Pendiente de activar
+- Click para activar manualmente
+
+### Estados Visuales:
+| Estado | Icono | Indicador |
+|--------|-------|-----------|
+| Activadas | 🔔 Verde | Punto verde |
+| Pendiente | 🔕 Gris | Punto amarillo pulsante |
+| Bloqueadas | 🔕 Rojo | Sin punto |
+
+---
+
+## 📝 Documentación: ROADMAP.md
+
+### Descripción
+Se creó documentación exhaustiva de mejoras futuras recomendadas.
+
+### Contenido:
+- Sistema de Caja (nuevo rol "caja")
+- Reportes PDF
+- Rate Limiting
+- Refresh Tokens
+- Múltiples Sucursales
+- Sistema de Propinas
+- Reservaciones
+- Y más...
+
+---
+
+## 🗓️ 12 de Enero, 2026 (Anterior)
+
 ### Versión 1.2.0 → 1.3.0
 
 ---

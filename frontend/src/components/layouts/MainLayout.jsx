@@ -154,14 +154,8 @@ export default function MainLayout() {
                 )}
               </div>
 
-              {/* Estado de notificaciones para meseros */}
+              {/* Estado de notificaciones para meseros/cocina */}
               <NotificationStatus />
-
-              {/* Notificaciones */}
-              <button className="relative p-2 rounded-lg hover:bg-gray-100">
-                <Bell className="w-5 h-5 text-gray-600" />
-                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-              </button>
 
               {/* Menú de usuario */}
               <div className="relative">

@@ -4,6 +4,88 @@ Documentación de todas las modificaciones, errores y soluciones aplicadas despu
 
 ---
 
+## 🗓️ 13 de Enero, 2026
+
+### Versión 1.4.0 → 1.5.0
+
+---
+
+## 🛡️ Seguridad: Sanitización de Inputs
+
+### Descripción
+Implementación de middleware de sanitización para prevenir ataques XSS e inyección de código malicioso.
+
+### Características:
+- **Sanitización global** de `req.body`, `req.query` y `req.params`
+- **DOMPurify** para eliminar HTML/scripts maliciosos
+- **Rate limiting para login** - 5 intentos máximo cada 15 minutos
+
+### Archivos Creados:
+- `backend/src/middleware/sanitize.js` - Middleware de sanitización con DOMPurify
+
+### Archivos Modificados:
+- `backend/src/index.js` - Integración del middleware global y rate limit de login
+
+### Dependencias Agregadas:
+```bash
+npm install dompurify jsdom
+```
+
+---
+
+## ⚡ Rendimiento: Índices de Base de Datos
+
+### Descripción
+Optimización de queries frecuentes mediante índices adicionales en PostgreSQL.
+
+### Índices Implementados:
+- **orders**: estado, created_at DESC, mesero_id, mesa_id
+- **order_items**: order_id, menu_item_id
+- **menu_items**: categoria_id, disponible
+- **ingredients**: (stock_actual, stock_minimo), activo
+- **alerts**: tipo, leida, resuelta
+- **audit_logs**: user_id, created_at, action
+- **users**: email, rol, activo
+- **tokens/suscripciones**: user_id, expires_at
+
+### Archivos Creados:
+- `backend/src/database/create-indexes.js` - Script standalone para crear índices
+
+### Archivos Modificados:
+- `backend/src/database/migrate.js` - Índices incluidos en migración
+- `backend/package.json` - Nuevo comando `npm run db:indexes`
+
+---
+
+## 📊 Monitoreo: Sentry APM
+
+### Descripción
+Integración con Sentry para monitoreo de errores en tiempo real.
+
+### Características:
+- **Captura automática** de excepciones no manejadas
+- **Contexto de request** para debugging
+- **Filtrado de datos sensibles** (passwords, tokens)
+- **Funciones helper** para captura manual
+
+### Archivos Creados:
+- `backend/src/utils/sentry.js` - Servicio completo de Sentry
+
+### Archivos Modificados:
+- `backend/src/index.js` - Integración de handlers de Sentry
+
+### Variables de Entorno (Opcionales):
+```
+SENTRY_DSN=https://xxx@xxx.ingest.sentry.io/xxx
+```
+
+### Dependencias Agregadas:
+```bash
+npm install @sentry/node
+```
+
+---
+
 ## 🗓️ 12 de Enero, 2026
 
 ### Versión 1.3.0 → 1.4.0

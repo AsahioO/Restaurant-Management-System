@@ -82,33 +82,20 @@ Implementar tokens de acceso de corta duración (15 min) con refresh tokens de l
 
 ---
 
-### Sanitización de Inputs
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Baja
+### ✅ Sanitización de Inputs (IMPLEMENTADO - v1.5.0)
+**Estado:** ✅ Completado  
+**Fecha:** 13 de Enero, 2026
 
-Prevenir XSS e inyección SQL sanitizando todos los inputs.
+Prevención de XSS e inyección de código implementada con DOMPurify.
 
-```javascript
-// Instalar: npm install express-validator xss-clean
-const xss = require('xss-clean');
-const { body, validationResult } = require('express-validator');
+**Implementación:**
+- Middleware global `sanitizeInputs` que sanitiza `req.body`, `req.query` y `req.params`
+- Usa DOMPurify para eliminar cualquier HTML/scripts maliciosos
+- Rate limiting específico para login (5 intentos / 15 min) contra fuerza bruta
 
-// Middleware global
-app.use(xss());
-
-// Validación específica
-const createOrderValidation = [
-  body('mesa_id').isInt().optional(),
-  body('items').isArray({ min: 1 }),
-  body('items.*.menu_item_id').isInt(),
-  body('items.*.cantidad').isInt({ min: 1, max: 100 }),
-  body('notas').trim().escape().optional(),
-];
-```
-
-**Archivos a modificar:**
-- `backend/src/app.js`
-- `backend/src/routes/*.js` - Agregar validaciones
+**Archivos creados/modificados:**
+- `backend/src/middleware/sanitize.js` - Middleware de sanitización
+- `backend/src/index.js` - Integración del middleware global
 
 ---
 
@@ -201,25 +188,27 @@ const getOrders = async (cursor, limit = 20) => {
 
 ---
 
-### Índices en Base de Datos
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Baja
+### ✅ Índices en Base de Datos (IMPLEMENTADO - v1.5.0)
+**Estado:** ✅ Completado  
+**Fecha:** 13 de Enero, 2026
 
-Agregar índices para queries frecuentes.
+Índices optimizados para queries frecuentes.
 
-```sql
--- Índices recomendados
-CREATE INDEX idx_orders_estado ON orders(estado);
-CREATE INDEX idx_orders_mesero_id ON orders(mesero_id);
-CREATE INDEX idx_orders_created_at ON orders(created_at DESC);
-CREATE INDEX idx_orders_mesa_id ON orders(mesa_id);
-CREATE INDEX idx_order_items_order_id ON order_items(order_id);
-CREATE INDEX idx_menu_items_categoria ON menu_items(categoria_id);
-CREATE INDEX idx_ingredients_stock ON ingredients(stock_actual, stock_minimo);
-```
+**Índices implementados:**
+- `orders`: estado, created_at DESC, mesero_id, mesa_id
+- `order_items`: order_id, menu_item_id
+- `menu_items`: categoria_id, disponible
+- `ingredients`: (stock_actual, stock_minimo), activo
+- `alerts`: tipo, leida, resuelta
+- `audit_logs`: user_id, created_at, action
+- `users`: email, rol, activo
+- `refresh_tokens`: user_id, expires_at
+- `push_subscriptions`: user_id
 
-**Archivo a modificar:**
-- `backend/src/database/migrate.js` - Agregar al final de la migración
+**Archivos creados/modificados:**
+- `backend/src/database/migrate.js` - Índices en migración principal
+- `backend/src/database/create-indexes.js` - Script standalone para crear índices
+- Nuevo comando: `npm run db:indexes`
 
 ---
 
@@ -715,27 +704,27 @@ pg_dump $DATABASE_URL > backups/backup_$DATE.sql
 
 ---
 
-### Monitoreo (APM)
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Baja
+### ✅ Monitoreo (APM) (IMPLEMENTADO - v1.5.0)
+**Estado:** ✅ Completado  
+**Fecha:** 13 de Enero, 2026
 
-Detectar errores en tiempo real.
+Monitoreo de errores en tiempo real con Sentry.
 
-**Sentry (recomendado):**
-```javascript
-// backend/src/app.js
-const Sentry = require('@sentry/node');
-Sentry.init({ dsn: process.env.SENTRY_DSN });
-app.use(Sentry.Handlers.requestHandler());
-// ... rutas
-app.use(Sentry.Handlers.errorHandler());
-```
+**Implementación Backend:**
+- Integración completa con @sentry/node
+- Request handler para capturar contexto de peticiones
+- Error handler para capturar excepciones no manejadas
+- Filtrado automático de datos sensibles (passwords, tokens)
+- Funciones helper: `captureError`, `captureMessage`, `setUser`
 
-```javascript
-// frontend/src/main.jsx
-import * as Sentry from '@sentry/react';
-Sentry.init({ dsn: process.env.VITE_SENTRY_DSN });
-```
+**Configuración:**
+1. Crear cuenta en [sentry.io](https://sentry.io)
+2. Crear proyecto Node.js
+3. Agregar variable `SENTRY_DSN` en Railway
+
+**Archivos creados:**
+- `backend/src/utils/sentry.js` - Servicio completo de Sentry
+- `backend/src/index.js` - Integración de handlers
 
 **Gratis:** 5,000 errores/mes
 

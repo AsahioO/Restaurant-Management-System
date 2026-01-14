@@ -11,8 +11,13 @@ const rateLimit = require('express-rate-limit');
 const config = require('./config');
 const routes = require('./routes');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
+const { sanitizeInputs } = require('./middleware/sanitize');
 const { initializeSocket } = require('./sockets');
 const logger = require('./utils/logger');
+const { initSentry, sentryRequestHandler, sentryErrorHandler } = require('./utils/sentry');
+
+// Inicializar Sentry (APM) - debe ser lo primero
+initSentry();
 
 // Crear aplicación Express
 const app = express();
@@ -62,6 +67,22 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
+// Rate limiting más estricto para login (prevenir fuerza bruta)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 5, // máximo 5 intentos
+  message: { 
+    success: false, 
+    message: 'Demasiados intentos de login, intenta en 15 minutos' 
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use('/api/auth/login', loginLimiter);
+
+// Sentry request handler (debe ir antes de otros handlers)
+app.use(sentryRequestHandler());
+
 // Logging
 if (config.env !== 'test') {
   app.use(morgan('combined', {
@@ -75,6 +96,9 @@ if (config.env !== 'test') {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Sanitización de inputs (prevenir XSS e inyección)
+app.use(sanitizeInputs);
+
 // Rutas de API
 app.use('/api', routes);
 
@@ -87,6 +111,9 @@ app.get('/', (req, res) => {
     documentation: '/api/health',
   });
 });
+
+// Sentry error handler (debe ir antes del error handler final)
+app.use(sentryErrorHandler());
 
 // Manejadores de error
 app.use(notFound);

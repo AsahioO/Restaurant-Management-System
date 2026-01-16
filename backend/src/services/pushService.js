@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 // Configurar VAPID keys
 const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
-const VAPID_EMAIL = process.env.VAPID_EMAIL || 'mailto:admin@emiliacafe.com';
+const VAPID_EMAIL = process.env.VAPID_EMAIL || 'mailto:admin@example.com';
 
 let pushEnabled = false;
 

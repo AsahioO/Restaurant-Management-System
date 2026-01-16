@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   Emilia Cafe - Reset Base de Datos
+echo   Restaurant Management System - DB Reset
 echo ========================================
 echo.
 echo ADVERTENCIA: Esto eliminara todos los datos y los recreara!
@@ -29,7 +29,7 @@ echo ========================================
 echo   Base de datos reseteada!
 echo ========================================
 echo.
-echo Usuarios de prueba:
-echo   Gerente:  gerente@emiliacafe.com / password123
-echo   Empleado: maria@emiliacafe.com / password123
+echo Demo users:
+echo   Manager:  admin@demo.com / password123
+echo   Employee: employee@demo.com / password123
 pause

@@ -126,7 +126,7 @@ export default function PWAUpdatePrompt() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-sm font-semibold text-gray-900">
-                Instalar Emilia Café
+                Instalar Restaurant
               </h3>
               <p className="mt-1 text-sm text-gray-500">
                 Instala la app en tu dispositivo para acceso rápido y funcionamiento offline.

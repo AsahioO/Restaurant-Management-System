@@ -1,851 +1,174 @@
-# 🗺️ Roadmap - Emilia Café
+# 🗺️ Roadmap - Restaurant Management System
 
-Guía de mejoras recomendadas para hacer el proyecto más escalable y profesional.
+Future improvements and feature ideas for the project.
 
 ---
 
-## 📋 Índice
+## 📋 Table of Contents
 
-1. [Seguridad](#-seguridad)
-2. [Escalabilidad](#-escalabilidad)
-3. [Funcionalidades de Negocio](#-funcionalidades-de-negocio)
+1. [Security](#-security)
+2. [Scalability](#-scalability)
+3. [Business Features](#-business-features)
 4. [UX/UI](#-uxui)
-5. [DevOps/Infraestructura](#-devopsinfraestructura)
+5. [DevOps](#-devops)
 6. [Analytics](#-analytics)
-7. [Prioridades Sugeridas](#-prioridades-sugeridas)
 
 ---
 
-## 🔐 Seguridad
+## 🔐 Security
 
-### Rate Limiting
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Media
+### ✅ Implemented
 
-Limitar el número de intentos de login para prevenir ataques de fuerza bruta.
+| Feature | Status | Version |
+|---------|--------|---------|
+| JWT Authentication | ✅ Done | 1.0.0 |
+| Role-based Access | ✅ Done | 1.0.0 |
+| Input Sanitization (XSS) | ✅ Done | 1.5.0 |
+| Login Rate Limiting | ✅ Done | 1.5.0 |
+| HTTPS Redirect | ✅ Done | 1.4.0 |
 
-```javascript
-// Ejemplo con express-rate-limit
-const rateLimit = require('express-rate-limit');
+### 🔄 Planned
 
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // máximo 5 intentos
-  message: 'Demasiados intentos de login, intenta en 15 minutos'
-});
-
-app.use('/api/auth/login', loginLimiter);
-```
-
-**Archivos a modificar:**
-- `backend/src/app.js`
-- `backend/src/routes/auth.js`
+| Feature | Priority | Complexity |
+|---------|----------|------------|
+| Two-Factor Authentication (2FA) | Medium | High |
+| Password Reset via Email | Medium | Medium |
+| Session Management Dashboard | Low | Medium |
+| API Key Authentication | Low | Medium |
 
 ---
 
-### HTTPS Forzado
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Baja
+## ⚡ Scalability
 
-Redirigir todo el tráfico HTTP a HTTPS en producción.
+### 🔄 Planned
 
-```javascript
-// Middleware para forzar HTTPS
-app.use((req, res, next) => {
-  if (process.env.NODE_ENV === 'production' && !req.secure) {
-    return res.redirect('https://' + req.headers.host + req.url);
-  }
-  next();
-});
-```
-
-**Nota:** Railway ya maneja esto automáticamente, pero es buena práctica tenerlo.
+| Feature | Priority | Complexity |
+|---------|----------|------------|
+| Redis Session Store | High | Medium |
+| Database Connection Pooling | High | Low |
+| Horizontal Scaling Support | Medium | High |
+| CDN for Static Assets | Medium | Low |
+| WebSocket Clustering | Medium | High |
 
 ---
 
-### Refresh Tokens
-**Prioridad:** 🟡 Media  
-**Complejidad:** Alta
+## 🍽️ Business Features
 
-Implementar tokens de acceso de corta duración (15 min) con refresh tokens de larga duración (7 días).
+### ✅ Implemented
 
-**Flujo:**
-1. Login → Recibe `accessToken` (15 min) + `refreshToken` (7 días)
-2. Request con `accessToken` expirado → 401
-3. Cliente envía `refreshToken` → Recibe nuevo `accessToken`
-4. Refresh token expirado → Redirigir a login
+| Feature | Status | Version |
+|---------|--------|---------|
+| Order Management | ✅ Done | 1.0.0 |
+| Menu Categories | ✅ Done | 1.0.0 |
+| Inventory Tracking | ✅ Done | 1.1.0 |
+| Low Stock Alerts | ✅ Done | 1.1.0 |
+| Real-time Updates | ✅ Done | 1.0.0 |
+| Push Notifications | ✅ Done | 1.4.0 |
+| Analytics Dashboard | ✅ Done | 1.2.0 |
 
-**Archivos a crear/modificar:**
-- `backend/src/controllers/authController.js` - Agregar endpoint `/refresh`
-- `backend/src/middleware/auth.js` - Validar refresh tokens
-- `frontend/src/services/api.js` - Interceptor para renovar tokens
+### 🔄 Planned
 
----
-
-### ✅ Sanitización de Inputs (IMPLEMENTADO - v1.5.0)
-**Estado:** ✅ Completado  
-**Fecha:** 13 de Enero, 2026
-
-Prevención de XSS e inyección de código implementada con DOMPurify.
-
-**Implementación:**
-- Middleware global `sanitizeInputs` que sanitiza `req.body`, `req.query` y `req.params`
-- Usa DOMPurify para eliminar cualquier HTML/scripts maliciosos
-- Rate limiting específico para login (5 intentos / 15 min) contra fuerza bruta
-
-**Archivos creados/modificados:**
-- `backend/src/middleware/sanitize.js` - Middleware de sanitización
-- `backend/src/index.js` - Integración del middleware global
+| Feature | Priority | Complexity |
+|---------|----------|------------|
+| Kitchen Display System (KDS) | High | Medium |
+| Customer Self-Ordering | High | High |
+| Table Reservations | Medium | Medium |
+| Receipt Printing | Medium | Medium |
+| Multi-location Support | Low | High |
+| Supplier Management | Low | Medium |
+| Employee Scheduling | Low | High |
 
 ---
 
-### Auditoría de Accesos
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
+## 🎨 UX/UI
 
-Log detallado de todas las acciones críticas.
+### ✅ Implemented
 
-**Ya implementado parcialmente** en `utils/permissions.js` con `logAuditAction`.
+| Feature | Status | Version |
+|---------|--------|---------|
+| Mobile Responsive | ✅ Done | 1.0.0 |
+| PWA Install | ✅ Done | 1.3.0 |
+| Dark Mode Ready | ✅ Done | 1.0.0 |
+| Real-time Indicators | ✅ Done | 1.0.0 |
 
-**Mejoras sugeridas:**
-- Crear vista de auditoría en el frontend para gerentes
-- Agregar filtros por usuario, fecha, tipo de acción
-- Exportar logs a CSV/PDF
+### 🔄 Planned
 
-**Archivos a crear:**
-- `frontend/src/pages/AuditLog.jsx`
-- `backend/src/routes/audit.js`
-
----
-
-## 📈 Escalabilidad
-
-### Redis para Cache
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
-
-Usar Redis para cachear datos frecuentes y sesiones.
-
-```javascript
-// Instalar: npm install redis
-const Redis = require('redis');
-const client = Redis.createClient({ url: process.env.REDIS_URL });
-
-// Cachear menú (cambia poco)
-const getMenuCached = async () => {
-  const cached = await client.get('menu:all');
-  if (cached) return JSON.parse(cached);
-  
-  const menu = await db.query('SELECT * FROM menu_items WHERE disponible = true');
-  await client.setEx('menu:all', 300, JSON.stringify(menu.rows)); // 5 min cache
-  return menu.rows;
-};
-```
-
-**Servicios recomendados:**
-- Railway Redis (add-on)
-- Upstash Redis (serverless, gratis hasta 10k requests/día)
+| Feature | Priority | Complexity |
+|---------|----------|------------|
+| Theme Customization | Medium | Low |
+| Drag & Drop Menu Ordering | Low | Medium |
+| Accessibility Improvements (a11y) | Medium | Medium |
+| Internationalization (i18n) | Medium | Medium |
 
 ---
 
-### CDN para Assets
-**Prioridad:** 🟢 Baja  
-**Complejidad:** Baja
-
-Servir imágenes de productos desde un CDN.
-
-**Opciones:**
-- Cloudinary (gratis hasta 25GB)
-- AWS S3 + CloudFront
-- Bunny CDN
-
-**Implementación:**
-1. Subir imágenes a CDN
-2. Guardar URL en base de datos
-3. Mostrar desde CDN en frontend
-
----
-
-### Paginación Optimizada (Cursor-based)
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
-
-Para listas grandes, usar cursor en vez de offset.
-
-```javascript
-// En vez de: OFFSET 1000 LIMIT 20 (lento)
-// Usar: WHERE id > $cursor LIMIT 20 (rápido)
-
-const getOrders = async (cursor, limit = 20) => {
-  const query = cursor
-    ? `SELECT * FROM orders WHERE id > $1 ORDER BY id LIMIT $2`
-    : `SELECT * FROM orders ORDER BY id LIMIT $1`;
-  
-  const params = cursor ? [cursor, limit] : [limit];
-  return db.query(query, params);
-};
-```
-
----
-
-### ✅ Índices en Base de Datos (IMPLEMENTADO - v1.5.0)
-**Estado:** ✅ Completado  
-**Fecha:** 13 de Enero, 2026
-
-Índices optimizados para queries frecuentes.
-
-**Índices implementados:**
-- `orders`: estado, created_at DESC, mesero_id, mesa_id
-- `order_items`: order_id, menu_item_id
-- `menu_items`: categoria_id, disponible
-- `ingredients`: (stock_actual, stock_minimo), activo
-- `alerts`: tipo, leida, resuelta
-- `audit_logs`: user_id, created_at, action
-- `users`: email, rol, activo
-- `refresh_tokens`: user_id, expires_at
-- `push_subscriptions`: user_id
-
-**Archivos creados/modificados:**
-- `backend/src/database/migrate.js` - Índices en migración principal
-- `backend/src/database/create-indexes.js` - Script standalone para crear índices
-- Nuevo comando: `npm run db:indexes`
-
----
-
-### Queue de Trabajos
-**Prioridad:** 🟢 Baja  
-**Complejidad:** Alta
-
-Para tareas pesadas como generar reportes PDF, enviar emails, etc.
-
-```javascript
-// Instalar: npm install bull
-const Queue = require('bull');
-const reportQueue = new Queue('reports', process.env.REDIS_URL);
-
-// Agregar trabajo
-reportQueue.add('daily-sales', { date: '2025-12-30' });
-
-// Procesar trabajos
-reportQueue.process('daily-sales', async (job) => {
-  const { date } = job.data;
-  await generateDailySalesReport(date);
-  await sendEmailWithReport(date);
-});
-```
-
----
-
-## 💼 Funcionalidades de Negocio
-
-### Sistema de Caja (Rol "Caja")
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Media
-
-Crear un rol dedicado para cajeros con vista especializada de cobro.
-
-**Características:**
-- Vista de Caja (`/cashier`) - Ver órdenes "servidas" pendientes de cobro
-- Selección de método de pago (efectivo, tarjeta, transferencia)
-- Calculadora de cambio para pagos en efectivo
-- Generación de ticket/recibo (opcional)
-- Corte de caja diario con resumen de ventas
-
-**Permisos por rol:**
-| Rol | Cobrar órdenes |
-|-----|----------------|
-| Gerente | ✅ Todas |
-| Caja | ✅ Todas |
-| Mesero | ✅ Solo las propias |
-| Cocina | ❌ No |
-
-**Cambios en base de datos:**
-```sql
--- Agregar 'caja' al constraint de rol
-ALTER TABLE users DROP CONSTRAINT users_rol_check;
-ALTER TABLE users ADD CONSTRAINT users_rol_check 
-  CHECK (rol IN ('gerente', 'empleado', 'cocina', 'caja'));
-
--- Agregar método de pago a orders
-ALTER TABLE orders ADD COLUMN metodo_pago VARCHAR(20);
-ALTER TABLE orders ADD COLUMN monto_recibido DECIMAL(10,2);
-ALTER TABLE orders ADD COLUMN cambio DECIMAL(10,2);
-
--- Tabla para cortes de caja
-CREATE TABLE cash_register_cuts (
-  id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id),
-  fecha DATE NOT NULL,
-  total_efectivo DECIMAL(10,2) DEFAULT 0,
-  total_tarjeta DECIMAL(10,2) DEFAULT 0,
-  total_transferencia DECIMAL(10,2) DEFAULT 0,
-  total_general DECIMAL(10,2) DEFAULT 0,
-  ordenes_cobradas INTEGER DEFAULT 0,
-  notas TEXT,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Archivos a crear:**
-- `frontend/src/pages/Cashier.jsx` - Vista de caja
-- `backend/src/controllers/cashController.js` - Lógica de cobro
-- `backend/src/routes/cash.js` - Rutas de caja
-
-**Archivos a modificar:**
-- `backend/src/utils/permissions.js` - Agregar rol CAJA
-- `backend/src/database/migrate.js` - Actualizar constraint
-- `frontend/src/App.jsx` - Agregar ruta /cashier
-- `frontend/src/components/layouts/MainLayout.jsx` - Navegación
-
----
-
-### Reportes PDF
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Media
-
-Generar reportes descargables en PDF.
-
-**Reportes sugeridos:**
-- Corte de caja diario
-- Ventas por período
-- Inventario actual
-- Productos más vendidos
-- Rendimiento de meseros
-
-```javascript
-// Instalar: npm install pdfkit
-const PDFDocument = require('pdfkit');
-
-const generateDailySalesReport = async (date) => {
-  const doc = new PDFDocument();
-  doc.fontSize(20).text('Reporte de Ventas Diario', { align: 'center' });
-  doc.fontSize(12).text(`Fecha: ${date}`);
-  // ... agregar datos
-  return doc;
-};
-```
-
-**Archivos a crear:**
-- `backend/src/services/reportService.js`
-- `backend/src/routes/reports.js`
-- `frontend/src/pages/Reports.jsx`
-
----
-
-### Múltiples Sucursales
-**Prioridad:** 🟢 Baja  
-**Complejidad:** Alta
-
-Soporte para manejar varias sucursales desde una sola plataforma.
-
-**Cambios requeridos:**
-1. Agregar tabla `branches` (sucursales)
-2. Agregar `branch_id` a: users, orders, tables, ingredients
-3. Filtrar todo por sucursal del usuario logueado
-4. Dashboard consolidado para dueño
-
----
-
-### Sistema de Propinas
-**Prioridad:** 🟡 Media  
-**Complejidad:** Baja
-
-Registrar y distribuir propinas.
-
-```sql
--- Agregar columna a orders
-ALTER TABLE orders ADD COLUMN propina DECIMAL(10,2) DEFAULT 0;
-
--- Reporte de propinas por mesero
-SELECT u.nombre, SUM(o.propina) as total_propinas
-FROM orders o
-JOIN users u ON o.mesero_id = u.id
-WHERE o.estado = 'cobrada' AND DATE(o.created_at) = CURRENT_DATE
-GROUP BY u.id;
-```
-
----
-
-### Reservaciones
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
-
-Sistema de reservas de mesas.
-
-```sql
-CREATE TABLE reservations (
-  id SERIAL PRIMARY KEY,
-  mesa_id INTEGER REFERENCES tables(id),
-  cliente_nombre VARCHAR(100) NOT NULL,
-  cliente_telefono VARCHAR(20),
-  fecha DATE NOT NULL,
-  hora TIME NOT NULL,
-  num_personas INTEGER NOT NULL,
-  notas TEXT,
-  estado VARCHAR(20) DEFAULT 'confirmada',
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
-**Archivos a crear:**
-- `backend/src/controllers/reservationController.js`
-- `backend/src/routes/reservations.js`
-- `frontend/src/pages/Reservations.jsx`
-
----
-
-### Programa de Lealtad
-**Prioridad:** 🟢 Baja  
-**Complejidad:** Alta
-
-Puntos por compra para clientes frecuentes.
-
-```sql
-CREATE TABLE customers (
-  id SERIAL PRIMARY KEY,
-  nombre VARCHAR(100) NOT NULL,
-  telefono VARCHAR(20) UNIQUE,
-  email VARCHAR(100),
-  puntos INTEGER DEFAULT 0,
-  created_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE loyalty_transactions (
-  id SERIAL PRIMARY KEY,
-  customer_id INTEGER REFERENCES customers(id),
-  order_id INTEGER REFERENCES orders(id),
-  puntos INTEGER NOT NULL,
-  tipo VARCHAR(20), -- 'ganado' o 'canjeado'
-  created_at TIMESTAMP DEFAULT NOW()
-);
-```
-
----
-
-### Caja/Arqueo
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Media
-
-Control de apertura y cierre de caja.
-
-```sql
-CREATE TABLE cash_registers (
-  id SERIAL PRIMARY KEY,
-  usuario_id INTEGER REFERENCES users(id),
-  monto_inicial DECIMAL(10,2) NOT NULL,
-  monto_final DECIMAL(10,2),
-  ventas_efectivo DECIMAL(10,2) DEFAULT 0,
-  ventas_tarjeta DECIMAL(10,2) DEFAULT 0,
-  diferencia DECIMAL(10,2),
-  estado VARCHAR(20) DEFAULT 'abierta',
-  opened_at TIMESTAMP DEFAULT NOW(),
-  closed_at TIMESTAMP
-);
-```
-
-**Flujo:**
-1. Gerente abre caja con monto inicial
-2. Se registran ventas en efectivo/tarjeta
-3. Al cerrar, se calcula diferencia
-4. Generar reporte de cierre
-
----
-
-### Turnos de Empleados
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
-
-Control de horarios y asistencia.
-
-```sql
-CREATE TABLE shifts (
-  id SERIAL PRIMARY KEY,
-  usuario_id INTEGER REFERENCES users(id),
-  fecha DATE NOT NULL,
-  hora_entrada TIME,
-  hora_salida TIME,
-  check_in TIMESTAMP,
-  check_out TIMESTAMP,
-  notas TEXT
-);
-```
-
----
-
-## 📱 UX/UI
-
-### ✅ PWA Completa (IMPLEMENTADO - v1.3.0)
-**Estado:** ✅ Completado  
-**Fecha:** 12 de Enero, 2026
-
-La aplicación es ahora una PWA completa con las siguientes características:
-
-- ✅ Instalable en móviles (Android/iOS) y escritorio
-- ✅ Service Worker con Workbox para cache inteligente
-- ✅ Funcionamiento offline con NetworkFirst para API
-- ✅ Prompt de actualización automática
-- ✅ Indicador de conexión online/offline
-- ✅ Iconos SVG adaptables (192x192, 512x512, maskable)
-- ✅ Meta tags para Apple Web App
-- ✅ Theme color personalizado (#6f3a61)
-
-**Archivos implementados:**
-- `frontend/vite.config.js` - Configuración vite-plugin-pwa
-- `frontend/src/components/PWAUpdatePrompt.jsx`
-- `frontend/src/components/OfflineIndicator.jsx`
-- `frontend/public/icons/*.svg`
-
-2. `frontend/public/sw.js` (Service Worker):
-```javascript
-const CACHE_NAME = 'emilia-v1';
-const urlsToCache = ['/', '/index.html', '/assets/'];
-
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
-});
-```
-
-3. Registrar en `frontend/src/main.jsx`:
-```javascript
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-}
-```
-
----
-
-### Modo Oscuro
-**Prioridad:** 🟡 Media  
-**Complejidad:** Baja
-
-Tema oscuro especialmente útil para la pantalla de cocina.
-
-```javascript
-// En tailwind.config.js
-module.exports = {
-  darkMode: 'class',
-  // ...
-}
-
-// Toggle en el componente
-const [darkMode, setDarkMode] = useState(false);
-document.documentElement.classList.toggle('dark', darkMode);
-```
-
-**Clases CSS:**
-```css
-.bg-gray-50 { @apply dark:bg-gray-900; }
-.text-gray-900 { @apply dark:text-gray-100; }
-```
-
----
-
-### Accesibilidad (a11y)
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
-
-Hacer la app accesible para todos los usuarios.
-
-**Mejoras:**
-- Agregar `aria-label` a botones con solo iconos
-- Asegurar contraste de colores suficiente
-- Navegación completa por teclado
-- Skip links para lectores de pantalla
-
-```jsx
-// Ejemplo
-<button 
-  onClick={handleDelete}
-  aria-label="Eliminar orden"
-  className="btn-ghost"
->
-  <Trash className="w-4 h-4" />
-</button>
-```
-
----
-
-### Atajos de Teclado
-**Prioridad:** 🟢 Baja  
-**Complejidad:** Baja
-
-Para operaciones frecuentes en cocina y caja.
-
-```javascript
-// Hook para atajos
-useEffect(() => {
-  const handleKeyDown = (e) => {
-    if (e.ctrlKey && e.key === 'n') {
-      e.preventDefault();
-      navigate('/orders/new');
-    }
-    if (e.key === 'F5') {
-      e.preventDefault();
-      fetchOrders();
-    }
-  };
-  
-  window.addEventListener('keydown', handleKeyDown);
-  return () => window.removeEventListener('keydown', handleKeyDown);
-}, []);
-```
-
-**Atajos sugeridos:**
-- `Ctrl+N` → Nueva orden
-- `F5` → Refrescar
-- `Esc` → Cerrar modal
-- `Enter` → Confirmar acción
-
----
-
-## 🔧 DevOps/Infraestructura
-
-### CI/CD con Tests
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Media
-
-Automatizar pruebas antes de cada deploy.
-
-**Archivo: `.github/workflows/ci.yml`**
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-      
-      - name: Install backend dependencies
-        run: cd backend && npm ci
-      
-      - name: Run backend tests
-        run: cd backend && npm test
-        env:
-          DATABASE_URL: postgresql://postgres:test@localhost:5432/test_db
-      
-      - name: Install frontend dependencies
-        run: cd frontend && npm ci
-      
-      - name: Build frontend
-        run: cd frontend && npm run build
-```
-
----
-
-### Staging Environment
-**Prioridad:** 🟡 Media  
-**Complejidad:** Baja
-
-Ambiente de pruebas antes de producción.
-
-**En Railway:**
-1. Crear nuevo proyecto "emilia-cafe-staging"
-2. Conectar al mismo repo pero rama `develop`
-3. Usar base de datos separada
-
-**Flujo:**
-```
-feature-branch → develop (staging) → main (producción)
-```
-
----
-
-### Backups Automáticos
-**Prioridad:** 🔴 Alta  
-**Complejidad:** Baja
-
-Respaldos diarios de la base de datos.
-
-**Railway:** Los backups están incluidos en el plan Pro.
-
-**Alternativa manual con cron:**
-```bash
-#!/bin/bash
-# backup.sh
-DATE=$(date +%Y-%m-%d)
-pg_dump $DATABASE_URL > backups/backup_$DATE.sql
-# Subir a S3 o Google Drive
-```
-
-**Servicio recomendado:** 
-- [SimpleBackups](https://simplebackups.com/) - Gratis hasta 1 backup diario
-
----
-
-### ✅ Monitoreo (APM) (IMPLEMENTADO - v1.5.0)
-**Estado:** ✅ Completado  
-**Fecha:** 13 de Enero, 2026
-
-Monitoreo de errores en tiempo real con Sentry.
-
-**Implementación Backend:**
-- Integración completa con @sentry/node
-- Request handler para capturar contexto de peticiones
-- Error handler para capturar excepciones no manejadas
-- Filtrado automático de datos sensibles (passwords, tokens)
-- Funciones helper: `captureError`, `captureMessage`, `setUser`
-
-**Configuración:**
-1. Crear cuenta en [sentry.io](https://sentry.io)
-2. Crear proyecto Node.js
-3. Agregar variable `SENTRY_DSN` en Railway
-
-**Archivos creados:**
-- `backend/src/utils/sentry.js` - Servicio completo de Sentry
-- `backend/src/index.js` - Integración de handlers
-
-**Gratis:** 5,000 errores/mes
-
----
-
-### Health Checks
-**Prioridad:** 🟡 Media  
-**Complejidad:** Baja
-
-Alertas si el servicio cae.
-
-**Ya implementado:** `GET /api/health`
-
-**Servicios de monitoreo:**
-- [UptimeRobot](https://uptimerobot.com/) - Gratis, 50 monitores
-- [Better Uptime](https://betteruptime.com/) - Gratis, 10 monitores
+## 🔧 DevOps
+
+### ✅ Implemented
+
+| Feature | Status | Version |
+|---------|--------|---------|
+| Environment Configuration | ✅ Done | 1.0.0 |
+| Database Migrations | ✅ Done | 1.0.0 |
+| Seed Data | ✅ Done | 1.0.0 |
+| Sentry Monitoring | ✅ Done | 1.5.0 |
+
+### 🔄 Planned
+
+| Feature | Priority | Complexity |
+|---------|----------|------------|
+| Docker Support | High | Medium |
+| Docker Compose Setup | High | Low |
+| CI/CD Pipeline | Medium | Medium |
+| Automated Testing | Medium | High |
+| Database Backups | Medium | Medium |
+| Health Check Endpoints | Low | Low |
 
 ---
 
 ## 📊 Analytics
 
-### Dashboard Avanzado
-**Prioridad:** 🟡 Media  
-**Complejidad:** Media
+### ✅ Implemented
 
-Gráficas de tendencias y comparativas.
+| Feature | Status | Version |
+|---------|--------|---------|
+| Daily Sales KPIs | ✅ Done | 1.2.0 |
+| Hourly Sales Chart | ✅ Done | 1.2.0 |
+| Sales Trends (14 days) | ✅ Done | 1.2.0 |
+| Category Distribution | ✅ Done | 1.2.0 |
+| Top Products | ✅ Done | 1.2.0 |
 
-**Métricas sugeridas:**
-- Ventas por hora del día (heatmap)
-- Comparativa semana actual vs anterior
-- Ticket promedio por mesero
-- Tiempo promedio de preparación
-- Tasa de cancelación
+### 🔄 Planned
 
-**Librerías:**
-- Recharts (ya instalado)
-- React-chartjs-2
-
----
-
-### Productos Más Vendidos
-**Prioridad:** 🟡 Media  
-**Complejidad:** Baja
-
-Análisis por hora, día, semana.
-
-```sql
--- Top 10 productos de la semana
-SELECT 
-  mi.nombre,
-  SUM(oi.cantidad) as total_vendido,
-  SUM(oi.subtotal) as ingresos
-FROM order_items oi
-JOIN menu_items mi ON oi.menu_item_id = mi.id
-JOIN orders o ON oi.order_id = o.id
-WHERE o.estado = 'cobrada' 
-  AND o.created_at >= NOW() - INTERVAL '7 days'
-GROUP BY mi.id
-ORDER BY total_vendido DESC
-LIMIT 10;
-```
+| Feature | Priority | Complexity |
+|---------|----------|------------|
+| Export Reports (PDF/Excel) | High | Medium |
+| Custom Date Ranges | Medium | Low |
+| Inventory Reports | Medium | Low |
+| Employee Performance | Low | Medium |
+| Customer Analytics | Low | High |
 
 ---
 
-### Tiempo de Preparación
-**Prioridad:** 🟡 Media  
-**Complejidad:** Baja
+## 🎯 Priority Legend
 
-Métricas de eficiencia de cocina.
-
-```sql
--- Agregar timestamps a orders
-ALTER TABLE orders ADD COLUMN started_at TIMESTAMP;  -- cuando pasa a en_preparacion
-ALTER TABLE orders ADD COLUMN ready_at TIMESTAMP;    -- cuando pasa a lista
-
--- Tiempo promedio de preparación
-SELECT 
-  DATE(created_at) as fecha,
-  AVG(EXTRACT(EPOCH FROM (ready_at - started_at))/60) as minutos_promedio
-FROM orders
-WHERE ready_at IS NOT NULL
-GROUP BY DATE(created_at)
-ORDER BY fecha DESC;
-```
+| Priority | Description |
+|----------|-------------|
+| 🔴 High | Critical for production use |
+| 🟡 Medium | Improves user experience significantly |
+| 🟢 Low | Nice to have, future consideration |
 
 ---
 
-## ⭐ Prioridades Sugeridas
+## 🤝 Contributing
 
-### Fase 1 - Estabilidad (1-2 semanas)
-- [ ] Rate Limiting
-- [ ] Índices en BD
-- [ ] Backups automáticos
-- [ ] Monitoreo con Sentry
-
-### Fase 2 - Negocio (2-4 semanas)
-- [ ] Reportes PDF (corte de caja)
-- [ ] Sistema de caja/arqueo
-- [x] PWA completa ✅ (v1.3.0)
-
-### Fase 3 - Optimización (1-2 meses)
-- [ ] Redis para cache
-- [ ] Refresh tokens
-- [ ] Dashboard avanzado
-- [ ] Modo oscuro para cocina
-
-### Fase 4 - Expansión (2-3 meses)
-- [ ] Reservaciones
-- [ ] Sistema de propinas
-- [ ] Turnos de empleados
-- [ ] Programa de lealtad
+Have an idea not listed here? Feel free to:
+1. Open an issue to discuss the feature
+2. Submit a pull request with your implementation
+3. Update this roadmap with new ideas
 
 ---
 
-## 📝 Notas
-
-- Cada mejora debe probarse en staging antes de producción
-- Documentar cambios en CHANGELOG.md
-- Hacer commits pequeños y descriptivos
-- Mantener tests actualizados
-
----
-
-*Última actualización: 30 de Diciembre, 2025*
+<p align="center">
+  <em>This roadmap is a living document and will be updated as the project evolves.</em>
+</p>

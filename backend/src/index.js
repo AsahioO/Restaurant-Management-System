@@ -105,7 +105,7 @@ app.use('/api', routes);
 // Ruta raíz
 app.get('/', (req, res) => {
   res.json({
-    name: 'Emilia Café API',
+    name: 'Restaurant Management API',
     version: '1.0.0',
     status: 'running',
     documentation: '/api/health',
@@ -123,7 +123,7 @@ app.use(errorHandler);
 const PORT = config.port;
 
 server.listen(PORT, () => {
-  logger.info(`🚀 Servidor Emilia Café corriendo en puerto ${PORT}`);
+  logger.info(`🚀 Restaurant Management System corriendo en puerto ${PORT}`);
   logger.info(`📡 WebSocket activo`);
   logger.info(`🌍 Ambiente: ${config.env}`);
   logger.info(`🔗 CORS habilitado para: ${config.cors.origin}`);

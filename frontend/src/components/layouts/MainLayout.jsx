@@ -76,7 +76,7 @@ export default function MainLayout() {
           {/* Logo */}
           <div className="flex items-center gap-3 px-6 py-5 border-b border-primary-800">
             <Coffee className="w-8 h-8 text-accent-400" />
-            <span className="font-display text-xl font-bold">Emilia Café</span>
+            <span className="font-display text-xl font-bold">Restaurant</span>
           </div>
 
           {/* Navegación */}
@@ -129,7 +129,7 @@ export default function MainLayout() {
 
             {/* Título de página (móvil) */}
             <div className="lg:hidden">
-              <span className="font-display font-semibold text-primary-800">Emilia Café</span>
+              <span className="font-display font-semibold text-primary-800">Restaurant</span>
             </div>
 
             {/* Acciones del header */}

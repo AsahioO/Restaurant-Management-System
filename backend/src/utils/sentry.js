@@ -22,7 +22,7 @@ const initSentry = () => {
     Sentry.init({
       dsn,
       environment: config.env,
-      release: `emilia-cafe@${require('../../package.json').version}`,
+      release: `rms@${require('../../package.json').version}`,
       
       // Capturar el 100% de transacciones en desarrollo, 10% en producción
       tracesSampleRate: config.env === 'production' ? 0.1 : 1.0,

@@ -1,7 +1,7 @@
 {
-  "name": "emilia-cafe",
+  "name": "restaurant-management-system",
   "version": "1.0.0",
-  "description": "Plataforma de gestión para Emilia Café",
+  "description": "Open source restaurant management system",
   "private": true,
   "workspaces": [
     "backend",

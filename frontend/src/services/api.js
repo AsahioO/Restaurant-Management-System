@@ -1,9 +1,7 @@
 import axios from 'axios'
 
-// URL de la API - producción o desarrollo
-const API_URL = import.meta.env.PROD 
-  ? 'https://emilia-cafe-backend-production.up.railway.app/api'
-  : '/api'
+// URL de la API - usar variable de entorno o desarrollo
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 const api = axios.create({
   baseURL: API_URL,

@@ -33,9 +33,9 @@ export default function Login() {
             <Coffee className="w-8 h-8 text-primary-700" />
           </div>
           <h1 className="font-display text-2xl font-bold text-gray-900">
-            Emilia Café
+            Restaurant
           </h1>
-          <p className="text-gray-500 mt-1">Sistema de Gestión</p>
+          <p className="text-gray-500 mt-1">Management System</p>
         </div>
 
         {/* Formulario */}
@@ -112,12 +112,12 @@ export default function Login() {
 
         {/* Credenciales de prueba */}
         <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 font-medium mb-2">Credenciales de prueba:</p>
+          <p className="text-xs text-gray-500 font-medium mb-2">Demo credentials:</p>
           <div className="space-y-1 text-xs text-gray-600">
-            <p><span className="font-medium">Gerente:</span> gerente@emiliacafe.com</p>
-            <p><span className="font-medium">Empleado:</span> maria@emiliacafe.com</p>
-            <p><span className="font-medium">Cocina:</span> cocina@emiliacafe.com</p>
-            <p><span className="font-medium">Contraseña:</span> password123</p>
+            <p><span className="font-medium">Manager:</span> admin@demo.com</p>
+            <p><span className="font-medium">Employee:</span> employee@demo.com</p>
+            <p><span className="font-medium">Kitchen:</span> kitchen@demo.com</p>
+            <p><span className="font-medium">Password:</span> password123</p>
           </div>
         </div>
       </div>

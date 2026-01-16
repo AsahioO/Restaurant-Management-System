@@ -6,7 +6,7 @@ self.addEventListener('push', (event) => {
   console.log('[SW] Push recibido:', event);
 
   let data = {
-    title: 'Emilia Café',
+    title: 'Restaurant',
     body: 'Tienes una nueva notificación',
     icon: '/icons/icon-192x192.svg',
     badge: '/icons/icon-192x192.svg'

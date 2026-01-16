@@ -16,5 +16,5 @@
     <path d="M115,10 Q125,-15 115,-40 Q105,-60 115,-80" fill="none" stroke="#a85596" stroke-width="8" stroke-linecap="round"/>
     <path d="M160,10 Q170,-15 160,-40 Q150,-60 160,-80" fill="none" stroke="#a85596" stroke-width="8" stroke-linecap="round"/>
   </g>
-  <text x="256" y="380" text-anchor="middle" font-family="serif" font-size="40" font-weight="bold" fill="#6f3a61">Emilia Café</text>
+  <text x="256" y="380" text-anchor="middle" font-family="serif" font-size="40" font-weight="bold" fill="#6f3a61">Restaurant</text>
 </svg>

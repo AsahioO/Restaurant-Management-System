@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   Emilia Cafe - Frontend
+echo   Restaurant Management System - Frontend
 echo ========================================
 echo.
 echo Iniciando servidor en http://localhost:5173

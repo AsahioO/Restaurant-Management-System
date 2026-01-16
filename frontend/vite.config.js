@@ -12,9 +12,9 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['coffee.svg', 'sounds/*.mp3', 'icons/*.svg', 'sw-push.js'],
       manifest: {
-        name: 'Emilia Café - Sistema de Gestión',
-        short_name: 'Emilia Café',
-        description: 'Sistema de gestión integral para restaurantes y cafeterías',
+        name: 'Restaurant Management System',
+        short_name: 'Restaurant',
+        description: 'Open source restaurant management system',
         theme_color: '#6f3a61',
         background_color: '#f3d3ed',
         display: 'standalone',
@@ -48,14 +48,14 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/svg+xml',
             form_factor: 'wide',
-            label: 'Emilia Café Dashboard'
+            label: 'Restaurant Dashboard'
           },
           {
             src: '/icons/icon-512x512.svg',
             sizes: '512x512',
             type: 'image/svg+xml',
             form_factor: 'narrow',
-            label: 'Emilia Café Móvil'
+            label: 'Restaurant Mobile'
           }
         ]
       },

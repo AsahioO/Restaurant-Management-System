@@ -15,7 +15,7 @@ router.get('/health', (req, res) => {
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    service: 'Emilia Café API',
+    service: 'Restaurant Management API',
   });
 });
 

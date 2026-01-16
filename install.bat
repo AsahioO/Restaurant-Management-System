@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   Emilia Cafe - Instalacion
+echo   Restaurant Management System - Install
 echo ========================================
 echo.
 

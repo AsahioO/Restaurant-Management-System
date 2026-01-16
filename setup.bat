@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   Emilia Cafe - Configuracion Inicial
+echo   Restaurant Management System - Setup
 echo ========================================
 echo.
 
@@ -15,14 +15,14 @@ if not exist "backend\.env" (
         echo # Base de datos PostgreSQL
         echo DB_HOST=localhost
         echo DB_PORT=5432
-        echo DB_NAME=emilia_cafe
+        echo DB_NAME=restaurant_db
         echo DB_USER=postgres
         echo DB_PASSWORD=tu_password_aqui
         echo.
         echo # JWT
-        echo JWT_SECRET=emilia_cafe_super_secret_key_2024_muy_segura
+        echo JWT_SECRET=your_super_secret_key_change_in_production
         echo JWT_EXPIRES_IN=15m
-        echo JWT_REFRESH_SECRET=emilia_cafe_refresh_secret_key_2024
+        echo JWT_REFRESH_SECRET=your_refresh_secret_key_change_in_production
         echo JWT_REFRESH_EXPIRES_IN=7d
         echo.
         echo # CORS
@@ -78,9 +78,9 @@ echo ========================================
 echo   Configuracion completada!
 echo ========================================
 echo.
-echo Usuarios de prueba:
-echo   Gerente:  gerente@emiliacafe.com / password123
-echo   Empleado: maria@emiliacafe.com / password123
+echo Demo users:
+echo   Manager:  admin@demo.com / password123
+echo   Employee: employee@demo.com / password123
 echo.
-echo Ejecuta dev.bat para iniciar el servidor de desarrollo
+echo Run dev.bat to start the development server
 pause

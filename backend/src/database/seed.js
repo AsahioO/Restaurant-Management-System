@@ -10,11 +10,11 @@ const seed = async () => {
     
     await db.query(`
       INSERT INTO users (nombre, email, password_hash, rol) VALUES
-      ('Gerente Admin', 'gerente@emiliacafe.com', $1, 'gerente'),
-      ('María García', 'maria@emiliacafe.com', $1, 'empleado'),
-      ('Carlos López', 'carlos@emiliacafe.com', $1, 'empleado'),
-      ('Ana Martínez', 'ana@emiliacafe.com', $1, 'empleado'),
-      ('Chef Pedro', 'cocina@emiliacafe.com', $1, 'cocina')
+      ('Admin User', 'admin@demo.com', $1, 'gerente'),
+      ('John Smith', 'employee@demo.com', $1, 'empleado'),
+      ('Jane Doe', 'jane@demo.com', $1, 'empleado'),
+      ('Bob Wilson', 'bob@demo.com', $1, 'empleado'),
+      ('Chef Kitchen', 'kitchen@demo.com', $1, 'cocina')
       ON CONFLICT (email) DO NOTHING
     `, [passwordHash]);
     console.log('✅ Usuarios creados');
@@ -155,7 +155,7 @@ const seed = async () => {
     // Crear configuraciones iniciales
     await db.query(`
       INSERT INTO settings (clave, valor, tipo, descripcion) VALUES
-      ('nombre_negocio', 'Emilia Café', 'string', 'Nombre del establecimiento'),
+      ('nombre_negocio', 'My Restaurant', 'string', 'Nombre del establecimiento'),
       ('direccion', 'Av. Principal 123, Col. Centro', 'string', 'Dirección del local'),
       ('telefono', '555-123-4567', 'string', 'Teléfono de contacto'),
       ('iva_porcentaje', '16', 'number', 'Porcentaje de IVA'),
@@ -170,8 +170,8 @@ const seed = async () => {
 
     console.log('\n🎉 Seed completado exitosamente');
     console.log('\n📋 Credenciales de prueba:');
-    console.log('   Gerente: gerente@emiliacafe.com / password123');
-    console.log('   Empleado: maria@emiliacafe.com / password123');
+    console.log('   Manager: admin@demo.com / password123');
+    console.log('   Employee: employee@demo.com / password123');
     
     process.exit(0);
   } catch (error) {

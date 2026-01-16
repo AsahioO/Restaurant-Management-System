@@ -14,7 +14,7 @@ const seed = async () => {
       ('John Smith', 'employee@demo.com', $1, 'empleado'),
       ('Jane Doe', 'jane@demo.com', $1, 'empleado'),
       ('Bob Wilson', 'bob@demo.com', $1, 'empleado'),
-      ('Chef Kitchen', 'kitchen@demo.com', $1, 'cocina')
+      ('Chef Kitchen', 'kitchen@demo.com', $1, 'empleado')
       ON CONFLICT (email) DO NOTHING
     `, [passwordHash]);
     console.log('✅ Usuarios creados');

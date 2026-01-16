@@ -100,8 +100,8 @@
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/restaurant-management-system.git
-cd restaurant-management-system
+git clone https://github.com/AsahioO/Restaurant-Management-System.git
+cd Restaurant-Management-System
 ```
 
 ### 2. Install dependencies
@@ -155,6 +155,8 @@ cd backend
 npm run db:migrate
 npm run db:seed
 ```
+
+> ⚠️ **Note:** If the seed fails with a `users_rol_check` constraint error, it means the database schema only supports `gerente` and `empleado` roles. The default migration uses these two roles. If you need additional roles (like `cocina`), you'll need to modify the migration file before running it.
 
 ### 6. Start development servers
 
